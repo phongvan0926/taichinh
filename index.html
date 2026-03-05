@@ -718,6 +718,16 @@ body::after {
 #chart-networth { width:100%; height:220px; }
 
 /* ══ AI ADVISOR MODULE ══ */
+.ai-model-btn {
+  padding:5px 12px;
+  font-family:var(--fh);font-size:11px;font-weight:700;
+  border:1px solid var(--border);
+  color:var(--text-muted);cursor:pointer;
+  transition:all .15s;
+  background:var(--surface);
+}
+.ai-model-btn:hover { border-color:var(--accent);color:var(--accent); }
+.ai-model-btn.active { background:var(--accent-dim);border-color:var(--accent);color:var(--accent); }
 .ai-tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:20px; }
 .ai-tab { padding:10px 20px; font-family:var(--fh); font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; }
 .ai-tab:hover { color:var(--text); }
@@ -741,6 +751,122 @@ body::after {
 .typing-dots span:nth-child(3) { animation-delay:.3s; }
 @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
 
+
+/* ════════════════════════════════════════════════════
+   RESPONSIVE — Mobile First (< 768px)
+   ════════════════════════════════════════════════════ */
+
+/* ── App shell layout ── */
+@media(max-width:768px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .main-content { padding: 12px; }
+
+  /* Topbar */
+  .topbar { padding: 10px 14px; gap: 8px; }
+  .topbar-title { font-size: 14px; }
+  .topbar-meta  { font-size: 10px; }
+  .topbar-actions { gap:6px; }
+  .btn-icon { width:32px; height:32px; font-size:13px; }
+
+  /* Dashboard KPI grid → 2 col */
+  .kpi-grid { grid-template-columns: 1fr 1fr !important; gap:10px !important; }
+  .kpi-card { padding:12px !important; }
+
+  /* Tables → scrollable */
+  .table-wrap, .tx-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table { min-width:500px; }
+
+  /* Modals → full screen */
+  .modal-backdrop { align-items:flex-end; }
+  .modal {
+    max-width:100% !important; width:100%;
+    max-height:85vh;
+    border-radius:0;
+    border-left:none; border-right:none; border-bottom:none;
+  }
+
+  /* Transaction filters → scroll */
+  .tx-filters { flex-wrap:nowrap; overflow-x:auto; gap:6px; padding-bottom:4px; }
+  .tx-filter { min-width:auto; flex-shrink:0; font-size:11px; padding:6px 10px; }
+
+  /* Budget bars */
+  .budget-bar-hdr { flex-wrap:wrap; gap:4px; }
+
+  /* Goal/debt/inv cards */
+  .goal-head, .debt-head { flex-direction:column; gap:8px; }
+  .inv-summary { grid-template-columns:1fr 1fr !important; }
+
+  /* AI tabs scroll */
+  .ai-tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; gap:0; }
+  .ai-tab  { white-space:nowrap; padding:9px 14px; font-size:10px; flex-shrink:0; }
+
+  /* AI model bar */
+  #ai-model-cards { gap:5px; }
+  .ai-model-btn { font-size:10px; padding:4px 9px; }
+
+  /* Onboarding */
+  .ob-content { padding:20px 16px; }
+  .ob-steps { gap:6px; }
+  .model-selector-wrap { flex-direction:column; align-items:flex-start; gap:10px; }
+  .model-cards { gap:6px; }
+  .model-card { min-width: calc(50% - 6px); flex:none; }
+
+  /* Asset/debt rows → stack on xs */
+  .asset-row, .debt-row { flex-wrap:wrap; gap:6px; }
+
+  /* Settings */
+  .form-2col { grid-template-columns:1fr !important; }
+
+  /* Charts */
+  #dash-donut-wrap { height:180px !important; }
+  #dash-line-wrap  { height:160px !important; }
+
+  /* Onboarding step dots */
+  .step-label { display:none; }
+  .step-conn  { width:20px !important; }
+
+  /* FI bar */
+  .fi-bar-row { flex-direction:column; gap:6px; }
+
+  /* Section titles */
+  .section-title { font-size:9px; }
+
+  /* Page padding */
+  .page { padding-bottom:80px; }
+}
+
+/* ── Extra small phones (< 400px) ── */
+@media(max-width:400px) {
+  .kpi-grid { grid-template-columns:1fr !important; }
+  .model-card { min-width:100%; }
+  .ai-model-btn { font-size:9px; padding:3px 7px; }
+}
+
+/* ── Touch improvements ── */
+@media(hover:none) {
+  .nav-item, .btn-primary, .btn-secondary, .btn-icon,
+  .model-card, .ai-model-btn, .ai-tab { cursor:default; }
+  input, select, textarea { font-size:16px !important; } /* prevent iOS zoom */
+}
+
+/* ── Bottom nav for mobile ── */
+@media(max-width:768px) {
+  #mobile-nav {
+    display:flex;
+    position:fixed; bottom:0; left:0; right:0; z-index:300;
+    background:var(--surface); border-top:1px solid var(--border);
+    padding:6px 0 calc(6px + env(safe-area-inset-bottom));
+  }
+  .mob-nav-item {
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; padding:4px; cursor:pointer; color:var(--text-muted);
+    font-family:var(--fh); font-size:8px; font-weight:700; letter-spacing:.5px;
+    text-transform:uppercase; transition:color .15s; border:none; background:none;
+  }
+  .mob-nav-item.active { color:var(--accent); }
+  .mob-nav-item .nav-ico { font-size:18px; line-height:1; }
+}
+#mobile-nav { display:none; }
 </style>
 
 <!-- Chart.js - nhẹ, không cần React, tải nhanh -->
@@ -948,22 +1074,22 @@ body::after {
             <div class="model-card selected" data-model="gemini-2.5-flash" onclick="selectModel(this)">
               <span class="model-card-badge badge-free">FREE</span>
               <div class="model-card-name">2.5 Flash</div>
-              <div class="model-card-desc">Nhanh + thông minh<br>Khuyên dùng ✓</div>
+              <div class="model-card-desc">Nhanh + thông minh<br>✓ Khuyên dùng</div>
             </div>
 
             <div class="model-card" data-model="gemini-2.5-flash-lite" onclick="selectModel(this)">
               <span class="model-card-badge badge-fast">LITE</span>
               <div class="model-card-name">2.5 Flash-Lite</div>
-              <div class="model-card-desc">Rẻ nhất, tốc độ<br>cao nhất</div>
+              <div class="model-card-desc">Rẻ nhất · nhanh nhất<br>Tiết kiệm quota</div>
+            </div>
+
+            <div class="model-card" data-model="gemini-2.5-flash" onclick="selectModel(this)">
+              <span class="model-card-badge badge-smart">PRO</span>
+              <div class="model-card-name">2.5 Pro</div>
+              <div class="model-card-desc">Phân tích sâu nhất<br>Paid tier</div>
             </div>
 
             <div class="model-card" data-model="gemini-2.5-pro" onclick="selectModel(this)">
-              <span class="model-card-badge badge-smart">PRO</span>
-              <div class="model-card-name">2.5 Pro</div>
-              <div class="model-card-desc">Mạnh nhất, phân<br>tích sâu nhất</div>
-            </div>
-
-            <div class="model-card" data-model="gemini-3-flash-preview" onclick="selectModel(this)">
               <span class="model-card-badge badge-new">NEW</span>
               <div class="model-card-name">3 Flash</div>
               <div class="model-card-desc">Thế hệ mới nhất<br>Preview · Free</div>
@@ -1589,6 +1715,19 @@ body::after {
          MODULE 7: AI ADVISOR
     ══════════════════════════════════════ -->
     <div class="page" id="page-ai">
+
+      <!-- Model Selector -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)">🤖 AI Model</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="ai-model-cards">
+          <div class="ai-model-btn active" data-model="gemini-2.5-flash"      onclick="selectAiModel(this)">2.5 Flash     <span style="font-size:9px;opacity:.7">FREE</span></div>
+          <div class="ai-model-btn"        data-model="gemini-2.5-flash-lite" onclick="selectAiModel(this)">2.5 Flash-Lite <span style="font-size:9px;opacity:.7">LITE</span></div>
+          <div class="ai-model-btn"        data-model="gemini-2.5-pro"        onclick="selectAiModel(this)">2.5 Pro        <span style="font-size:9px;opacity:.7">PRO</span></div>
+          <div class="ai-model-btn"        data-model="gemini-3-flash-preview" onclick="selectAiModel(this)">3 Flash        <span style="font-size:9px;opacity:.7">NEW</span></div>
+        </div>
+        <div id="ai-model-label" style="font-size:11px;color:var(--accent)">Gemini 2.5 Flash</div>
+      </div>
+
       <!-- Tabs -->
       <div class="ai-tabs">
         <div class="ai-tab active" onclick="switchAiTab('monthly',this)">📊 Phân tích tháng</div>
@@ -2074,6 +2213,24 @@ function showDemoBanner(fromIframe) {
 // ══════════════════════════════════════════════════════
 //  MODEL SELECTOR
 // ══════════════════════════════════════════════════════
+function selectAiModel(btn) {
+  document.querySelectorAll('.ai-model-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  SELECTED_MODEL = btn.dataset.model;
+  const nameMap = {
+    'gemini-2.5-flash'      : 'Gemini 2.5 Flash ✦ default',
+    'gemini-2.5-flash-lite' : 'Gemini 2.5 Flash-Lite',
+    'gemini-2.5-pro'        : 'Gemini 2.5 Pro',
+    'gemini-3-flash-preview': 'Gemini 3 Flash (Preview)',
+  };
+  const label = document.getElementById('ai-model-label');
+  if (label) label.textContent = nameMap[SELECTED_MODEL] || SELECTED_MODEL;
+  // Sync onboarding cards if visible
+  document.querySelectorAll('#model-cards .model-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.model === SELECTED_MODEL);
+  });
+}
+
 function selectModel(card) {
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
@@ -2316,7 +2473,7 @@ async function startDiagnosis() {
     'gemini-2.5-flash'      : 'Gemini 2.5 Flash',
     'gemini-2.5-flash-lite' : 'Gemini 2.5 Flash-Lite',
     'gemini-2.5-pro'        : 'Gemini 2.5 Pro',
-    'gemini-3-flash-preview': 'Gemini 3 Flash',
+    'gemini-3-flash-preview': 'Gemini 3 Flash (Preview)',
   }[SELECTED_MODEL] || SELECTED_MODEL;
 
   const msgs = [
@@ -2394,35 +2551,52 @@ FORMAT JSON:
 }`;
 }
 
-async function callGemini(prompt) {
-  // Gemini 3 Flash là reasoning model — không set temperature thấp
-  // 2.5 Pro dùng temperature mặc định để tránh loop
-  const isReasoning = SELECTED_MODEL.startsWith('gemini-3') || SELECTED_MODEL === 'gemini-2.5-pro';
-
+// ── Core Gemini fetch — trả về raw text ──
+async function _geminiRaw(prompt, temp, maxTok) {
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: isReasoning
-      ? { maxOutputTokens: 2000 }               // reasoning model: không set temp
-      : { temperature: 0.4, maxOutputTokens: 1500 }, // flash/lite: temp thấp = ổn định
+    generationConfig: { temperature: temp ?? 0.5, maxOutputTokens: maxTok ?? 1800 },
   };
-
   const res = await fetch(GEMINI_URL(), {
-    method:'POST', headers:{'Content-Type':'application/json'},
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    const errText = await res.text().catch(()=>'');
-    throw new Error(`Gemini ${res.status}: ${errText.slice(0,120)}`);
+    let detail = '';
+    try { const ej = await res.json(); detail = ej.error?.message || ''; } catch(e) {}
+    if (!detail) try { detail = (await res.text()).slice(0,200); } catch(e){}
+    throw new Error('Gemini ' + res.status + ': ' + detail);
   }
   const d = await res.json();
-  // Lấy text từ response — với reasoning model có thể có thought parts trước
-  const parts = d.candidates?.[0]?.content?.parts || [];
-  const raw = parts.filter(p => p.text).map(p => p.text).join('') || '';
-  const clean = raw.replace(/```json|```/g,'').trim();
-  // Tìm JSON block nếu có text bên ngoài
-  const jsonMatch = clean.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('Không parse được JSON từ Gemini response');
-  return JSON.parse(jsonMatch[0]);
+  if (d.error) throw new Error('Gemini API: ' + (d.error.message || JSON.stringify(d.error)));
+  const candidate = d.candidates?.[0];
+  if (!candidate) {
+    const block = d.promptFeedback?.blockReason;
+    throw new Error('Gemini không trả lời' + (block ? ' (bị chặn: ' + block + ')' : ''));
+  }
+  const parts = candidate.content?.parts || [];
+  const raw = parts.filter(p => p.text).map(p => p.text).join('').trim();
+  if (!raw) throw new Error('Gemini trả về nội dung trống (finishReason: ' + (candidate.finishReason||'?') + ')');
+  return raw;
+}
+
+// Dùng khi cần JSON output (X-quang chẩn đoán, phân tích thói quen)
+async function callGemini(prompt) {
+  const raw = await _geminiRaw(prompt, 0.3, 2000);
+  // Bóc JSON ra khỏi markdown fence nếu có
+  const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+  const m = clean.match(/\{[\s\S]*\}/);
+  if (!m) {
+    console.warn('[Gemini JSON] Raw:', raw.slice(0,300));
+    throw new Error('Không parse được JSON. Model trả về: ' + raw.slice(0,120));
+  }
+  try { return JSON.parse(m[0]); }
+  catch(e) { throw new Error('JSON syntax lỗi: ' + e.message + ' | raw: ' + m[0].slice(0,80)); }
+}
+
+// Dùng khi cần text thuần (phân tích tháng, FI advisor, chat)
+async function callGeminiText(prompt) {
+  return _geminiRaw(prompt, 0.6, 1800);
 }
 
 // ── Render result ──
@@ -2767,6 +2941,10 @@ function showPage(name, navEl) {
   if (name === 'assets')       loadAssets();
   if (name === 'ai')           loadAiHistory();
   if (name === 'settings')     loadSettingsPage();
+  // Sync mobile bottom nav
+  document.querySelectorAll('.mob-nav-item').forEach(b =>
+    b.classList.toggle('active', (b.getAttribute('onclick')||'').includes("'"+name+"'"))
+  );
 }
 
 function quickAddTx() {
@@ -3633,24 +3811,57 @@ async function loadAiHistory() {
 }
 
 // 7.1 Monthly Analysis
+// Format plain text từ Gemini thành HTML dễ đọc
+function fmtAiText(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^#{1,3}\s+(.+)$/gm,'<div style="font-weight:700;color:var(--accent);margin:10px 0 4px;font-size:12px;letter-spacing:.5px;text-transform:uppercase">$1</div>')
+    .replace(/^[-•]\s+(.+)$/gm,'<div style="padding:3px 0 3px 12px;border-left:2px solid var(--border);color:var(--text-dim)">$1</div>')
+    .replace(/^(\d+\.\s+.+)$/gm,'<div style="padding:4px 0;color:var(--text-dim)">$1</div>')
+    .replace(/\n{2,}/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+function renderAiError(msg) {
+  const isApiKey = msg.includes('API_KEY') || msg.includes('403') || msg.includes('key');
+  const isQuota  = msg.includes('429') || msg.includes('quota') || msg.includes('QUOTA');
+  const tip = isApiKey
+    ? '→ Vào <strong>⚙️ Cài đặt</strong> và nhập Gemini API Key hợp lệ'
+    : isQuota
+    ? '→ Đã vượt hạn mức miễn phí. Thử lại sau ít phút hoặc đổi API Key'
+    : '→ Kiểm tra API Key và kết nối mạng';
+  return `<div style="background:var(--danger-dim);border:1px solid var(--danger);padding:14px 16px;font-size:12px;line-height:1.8">
+    <div style="font-weight:700;color:var(--danger);margin-bottom:6px">❌ Lỗi Gemini AI</div>
+    <div style="color:var(--text-muted);font-family:monospace;font-size:11px;margin-bottom:8px">${msg}</div>
+    <div style="color:var(--text-dim)">${tip}</div>
+  </div>`;
+}
+
 async function analyzeMonthly() {
   const btn = document.getElementById('btn-monthly-analyze');
   btn.disabled = true; btn.textContent = '⏳ Đang phân tích...';
   const resultEl = document.getElementById('ai-monthly-result');
   resultEl.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-
   try {
     const month = new Date().toISOString().slice(0,7);
     const dash  = await apiGet('getDashboard', { month });
     const prompt = buildMonthlyPrompt(dash);
-    const res = await callGemini(prompt);
-    const text = typeof res === 'string' ? res : (res.text || JSON.stringify(res));
-    resultEl.innerHTML = `<div class="ai-insight-card"><div class="ai-insight-head"><span class="ai-insight-type">📊 Phân tích ${month}</span><span class="ai-insight-date">Vừa phân tích</span></div><div class="ai-insight-body">${text}</div></div>`;
-    // Save to Sheets
-    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'monthly_review', insight_text: text, is_read:'FALSE' } });
+    const text = await callGeminiText(prompt);
+    const html = fmtAiText(text);
+    resultEl.innerHTML = `
+      <div class="ai-insight-card">
+        <div class="ai-insight-head">
+          <span class="ai-insight-type">📊 Phân tích tháng ${month}</span>
+          <span class="ai-insight-date">${new Date().toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}</span>
+        </div>
+        <div class="ai-insight-body">${html}</div>
+      </div>`;
+    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'monthly_review', insight_text: text.slice(0,800), is_read:'FALSE' } });
     loadAiHistory();
   } catch(err) {
-    resultEl.innerHTML = `<div style="color:var(--danger);font-size:13px">Lỗi: ${err.message}</div>`;
+    resultEl.innerHTML = renderAiError(err.message);
   }
   btn.disabled = false; btn.textContent = 'Phân tích →';
 }
@@ -3701,8 +3912,7 @@ Trả về JSON:
   "specific_advice": ["lời khuyên 1 có số tiền","lời khuyên 2","lời khuyên 3"],
   "projected_savings_if_optimized": <số tiền tiết kiệm thêm/tháng>
 }`;
-    const res = await callGemini(prompt);
-    const parsed = typeof res === 'object' ? res : JSON.parse(typeof res === 'string' ? res.match(/\{[\s\S]*\}/)?.[0]||'{}' : '{}');
+    const parsed = await callGemini(prompt);
     resultEl.innerHTML = `
       <div class="ai-insight-card">
         <div class="ai-insight-head"><span class="ai-insight-type">🔍 Phân tích 3 tháng gần nhất</span></div>
@@ -3715,7 +3925,7 @@ Trả về JSON:
       </div>`;
     await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'habit_analysis', insight_text: JSON.stringify(parsed.specific_advice||[]).slice(0,500), is_read:'FALSE' } });
   } catch(err) {
-    resultEl.innerHTML = `<div style="color:var(--danger);font-size:13px">Lỗi: ${err.message}</div>`;
+    resultEl.innerHTML = renderAiError(err.message);
   }
   if (btn) { btn.disabled=false; btn.textContent='Phân tích thói quen →'; }
 }
@@ -3763,12 +3973,18 @@ Với lãi suất ETF VN trung bình 12%/năm, lạm phát 6%/năm, tính:
 3. 3 lời khuyên cụ thể để rút ngắn hành trình FI
 
 Trả lời tiếng Việt, có số liệu cụ thể, ngắn gọn, như người bạn tài chính.`;
-    const res = await callGemini(prompt);
-    const text = typeof res === 'string' ? res : JSON.stringify(res);
-    resultEl.innerHTML = `<div class="ai-insight-card"><div class="ai-insight-head"><span class="ai-insight-type">🏆 Lộ trình FIRE cá nhân</span><span class="ai-insight-date">Vừa tính</span></div><div class="ai-insight-body">${text}</div></div>`;
+    const text = await callGeminiText(prompt);
+    resultEl.innerHTML = `
+      <div class="ai-insight-card">
+        <div class="ai-insight-head">
+          <span class="ai-insight-type">🏆 Lộ trình FIRE cá nhân</span>
+          <span class="ai-insight-date">${new Date().toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}</span>
+        </div>
+        <div class="ai-insight-body">${fmtAiText(text)}</div>
+      </div>`;
     await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'fi_advice', insight_text: text.slice(0,800), is_read:'FALSE' } });
   } catch(err) {
-    resultEl.innerHTML = `<div style="color:var(--danger);font-size:13px">Lỗi: ${err.message}</div>`;
+    resultEl.innerHTML = renderAiError(err.message);
   }
   if (btn) { btn.disabled=false; btn.textContent='Tư vấn lộ trình FI →'; }
 }
@@ -3953,6 +4169,11 @@ async function savePersonalSettings() {
   }
 }
 
+function updateMobNav(el) {
+  document.querySelectorAll('.mob-nav-item').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
 function restartOnboarding() {
   // Reset demo flag + S state
   if (DEMO_MODE) {
@@ -3995,5 +4216,23 @@ function applyStoredConfig() {
 }
 
 </script>
+<!-- ── Mobile bottom nav ── -->
+<div id="mobile-nav">
+  <button class="mob-nav-item active" onclick="showPage('dashboard',this);updateMobNav(this)">
+    <span class="nav-ico">📊</span>Tổng quan
+  </button>
+  <button class="mob-nav-item" onclick="showPage('transactions',this);updateMobNav(this)">
+    <span class="nav-ico">💳</span>Giao dịch
+  </button>
+  <button class="mob-nav-item" onclick="showPage('budget',this);updateMobNav(this)">
+    <span class="nav-ico">📋</span>Ngân sách
+  </button>
+  <button class="mob-nav-item" onclick="showPage('ai',this);updateMobNav(this)">
+    <span class="nav-ico">🤖</span>AI
+  </button>
+  <button class="mob-nav-item" onclick="showPage('settings',this);updateMobNav(this)">
+    <span class="nav-ico">⚙️</span>Cài đặt
+  </button>
+</div>
 </body>
 </html>
