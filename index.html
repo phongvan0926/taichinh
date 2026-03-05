@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FinanceOS — Quản lý tài chính cá nhân</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
 
 <style>
 /* ════════════════════════════════════════════════════
    DESIGN SYSTEM — Clinical Finance OS
    Dark terminal aesthetic: nền obsidian, accent #10b981
-   Typography: Syne (display) + DM Sans (body)
+   Typography: Plus Jakarta Sans (display/numbers) + DM Sans (body)
    ════════════════════════════════════════════════════ */
 :root {
   /* ── Light energetic palette ── */
@@ -42,7 +42,7 @@
   --text-dim:   #4c5280;
   --text-muted: #9ba3c4;
   /* ── Typography ── */
-  --fh:         'Syne', sans-serif;
+  --fh:         'Plus Jakarta Sans', sans-serif;
   --fb:         'DM Sans', sans-serif;
   --glow:       0 4px 24px rgba(108,71,255,.2);
   --shadow:     0 4px 16px rgba(108,71,255,.1);
@@ -55,7 +55,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--fb);
-  font-weight:400;
+  font-weight:500;
   min-height:100vh;
   overflow-x:hidden;
 }
@@ -190,6 +190,7 @@ body::before {
   flex-shrink:0;
 }
 .topbar-title {
+  font-weight:700;
   font-family:var(--fh);
   font-size:16px;
   font-weight:700;
@@ -247,7 +248,7 @@ body::before {
 }
 .ob-tag {
   display:inline-block;
-  font-family:var(--fh); font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  font-family:var(--fh); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
   color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent);
   padding:4px 12px; margin-bottom:14px;
 }
@@ -403,7 +404,7 @@ body::before {
 }
 .tbar-item { display:flex; flex-direction:column; gap:2px; }
 .tbar-label { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); }
-.tbar-val { font-family:var(--fh); font-size:16px; font-weight:700; color:var(--accent); }
+.tbar-val { font-family:var(--fh); font-size:18px; font-weight:700; color:var(--accent); line-height:1.2; }
 .tbar-val.red { color:var(--danger); }
 
 /* Buttons */
@@ -460,7 +461,7 @@ body::before {
 .sc-bg   { fill:none; stroke:var(--border); stroke-width:8; }
 .sc-fill { fill:none; stroke-width:8; stroke-linecap:butt; stroke-dasharray:440; stroke-dashoffset:440; transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1), stroke .5s; }
 .score-num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-.score-val { font-family:var(--fh); font-size:38px; font-weight:800; line-height:1; }
+.score-val { font-family:var(--fh); font-size:42px; font-weight:800; line-height:1; }
 .score-of  { font-size:12px; color:var(--text-dim); }
 .score-verd { font-family:var(--fh); font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-top:10px; }
 
@@ -504,15 +505,15 @@ body::before {
   background:var(--surface); border:1px solid var(--border);
   padding:18px 20px;
 }
-.kpi-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
-.kpi-value { font-family:var(--fh); font-size:22px; font-weight:800; color:var(--text); }
-.kpi-sub   { font-size:11px; color:var(--text-dim); margin-top:4px; }
+.kpi-label { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
+.kpi-value { font-family:var(--fh); font-size:28px; font-weight:800; color:var(--text); line-height:1.15; }
+.kpi-sub   { font-size:11px; font-weight:500; color:var(--text-dim); margin-top:5px; }
 .kpi-card.green .kpi-value { color:var(--accent); }
 .kpi-card.red   .kpi-value { color:var(--danger); }
 .kpi-card.blue  .kpi-value { color:var(--blue); }
 .kpi-card.warn  .kpi-value { color:var(--warn); }
 
-.section-title {
+.section-title { font-weight:700; font-size:11px; letter-spacing:1px;
   font-family:var(--fh); font-size:11px; font-weight:700; letter-spacing:2.5px;
   text-transform:uppercase; color:var(--accent); margin-bottom:14px;
   display:flex; align-items:center; gap:7px; padding-bottom:10px;
@@ -541,8 +542,8 @@ body::before {
 /* FI progress bar */
 .fi-bar-wrap { background:var(--surface); border:1px solid var(--border); padding:18px 20px; margin-bottom:16px; }
 .fi-bar-hdr  { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px; }
-.fi-bar-title { font-family:var(--fh); font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text); }
-.fi-bar-pct   { font-family:var(--fh); font-size:22px; font-weight:800; color:var(--accent); }
+.fi-bar-title { font-family:var(--fh); font-size:14px; font-weight:700; letter-spacing:0px; color:var(--text); }
+.fi-bar-pct   { font-family:var(--fh); font-size:30px; font-weight:800; color:var(--accent); line-height:1; }
 .fi-bar-bg    { height:8px; background:var(--border); }
 .fi-bar-fill  { height:100%; background:var(--accent); transition:width 1.2s ease; width:0; }
 .fi-bar-meta  { display:flex; justify-content:space-between; margin-top:7px; font-size:11px; color:var(--text-muted); }
@@ -622,7 +623,7 @@ body::before {
 .module-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
 @media(max-width:640px){ .module-grid-2 { grid-template-columns:1fr; } }
 .card { background:var(--surface); border:1px solid var(--border); padding:18px 20px; box-shadow:0 2px 12px rgba(108,71,255,.07); border-radius:2px; }
-.card-title { font-family:var(--fh); font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+.card-title { font-family:var(--fh); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:7px; }
 .card-title::before { content:''; display:inline-block; width:2px; height:12px; background:var(--accent); }
 .empty-state { padding:40px; text-align:center; color:var(--text-muted); font-size:13px; border:1px dashed var(--border); }
 
@@ -686,8 +687,8 @@ body::before {
 .inv-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
 @media(max-width:500px){ .inv-summary { grid-template-columns:1fr 1fr; } }
 .inv-kpi { background:var(--surface); border:1px solid var(--border); padding:14px 16px; }
-.inv-kpi-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
-.inv-kpi-val   { font-family:var(--fh); font-size:18px; font-weight:800; color:var(--text); }
+.inv-kpi-label { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+.inv-kpi-val   { font-family:var(--fh); font-size:22px; font-weight:800; color:var(--text); line-height:1.15; }
 .inv-row { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); }
 .inv-row:last-child { border-bottom:none; }
 .inv-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -720,7 +721,7 @@ body::before {
 
 /* ══ ASSETS / NET WORTH MODULE ══ */
 .nw-hero { background:var(--surface); border:1px solid var(--accent); padding:24px; margin-bottom:20px; text-align:center; }
-.nw-label { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+.nw-label { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px; }
 .nw-amount { font-family:var(--fh); font-size:clamp(28px,6vw,48px); font-weight:800; color:var(--accent); }
 .nw-breakdown { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
 .nw-item { text-align:center; }
@@ -2009,6 +2010,39 @@ body::before {
           </button>
         </div>
 
+        <!-- 🗑 Xóa dữ liệu -->
+        <div class="card" style="margin-bottom:20px;border-color:var(--danger)">
+          <div class="card-title" style="color:var(--danger)">🗑️ Xóa dữ liệu</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.7">
+            Xóa toàn bộ hoặc theo tháng dữ liệu trên Google Sheets.<br>
+            <strong style="color:var(--danger)">⚠️ Không thể khôi phục sau khi xóa.</strong>
+          </div>
+
+          <!-- Xóa theo tháng -->
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border)">
+            <div class="field" style="margin:0;flex:1;min-width:140px">
+              <label>Xóa giao dịch theo tháng</label>
+              <input type="month" id="clear-month-input" style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:13px;padding:8px 12px;outline:none;width:100%"/>
+            </div>
+            <button onclick="clearDataByMonth()" style="padding:9px 16px;font-size:12px;font-weight:700;background:var(--warn-dim);border:1px solid var(--warn);color:var(--warn);cursor:pointer;font-family:var(--fh);flex-shrink:0;white-space:nowrap">
+              🗓 Xóa tháng này
+            </button>
+          </div>
+
+          <!-- Xóa tất cả -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 14px;background:var(--danger-dim);border:1px solid var(--danger)">
+            <div style="flex:1;font-size:12px;color:var(--text-dim)">
+              Xóa toàn bộ: giao dịch, ngân sách, mục tiêu, tài sản, nợ, AI insights.
+              <br>Settings và thông tin cá nhân được giữ lại.
+            </div>
+            <button onclick="confirmClearAll()" style="padding:9px 16px;font-size:12px;font-weight:700;background:var(--danger);border:none;color:#fff;cursor:pointer;font-family:var(--fh);flex-shrink:0;white-space:nowrap">
+              💣 Xóa tất cả dữ liệu
+            </button>
+          </div>
+
+          <div id="clear-data-status" style="margin-top:10px;font-size:12px"></div>
+        </div>
+
         <!-- Thông tin cá nhân -->
         <div class="card">
           <div class="card-title">👤 Thông tin cá nhân</div>
@@ -2208,6 +2242,10 @@ async function demoApiPost(payload) {
   if (payload.action === 'addInvestment' && payload.data) DEMO_DATA.investments.push({ ...payload.data, id: payload.data.id || uuid() });
   if (payload.action === 'addDebt' && payload.data) DEMO_DATA.debts.push({ ...payload.data, id: payload.data.id || uuid() });
   if (payload.action === 'saveInsight' && payload.data) DEMO_DATA.ai_insights.unshift({ ...payload.data });
+  if (payload.action === 'deleteInsight' && payload.data?.id) {
+    const idx = DEMO_DATA.ai_insights.findIndex(i => i.id === payload.data.id);
+    if (idx !== -1) DEMO_DATA.ai_insights.splice(idx, 1);
+  }
   return { success: true, id: payload.data?.id || uuid() };
 }
 
@@ -2648,8 +2686,10 @@ async function startDiagnosis() {
 
   const msgs = [
     ['Tổng hợp dữ liệu tài chính...','Kiểm kê tài sản và nợ của bạn'],
-    ['Tính các chỉ số sức khỏe...','Phân tích tỷ lệ tiết kiệm, thanh khoản, nợ xấu'],
-    [`${modelLabel} đang viết chẩn đoán...`,'Cá nhân hóa lộ trình cho hoàn cảnh của bạn'],
+    ['Tính các chỉ số sức khỏe...','Tỷ lệ tiết kiệm, quỹ khẩn cấp, nợ xấu'],
+    [`${modelLabel} đang phân tích...`,'Đang gọi Gemini AI — có thể mất 5–15 giây'],
+    ['Viết chẩn đoán cá nhân...','Cá nhân hóa lộ trình cho hoàn cảnh của bạn'],
+    ['Hoàn thiện kết quả...','AI đang tổng hợp lời khuyên'],
   ];
   let mi = 0;
   const iv = setInterval(() => {
@@ -2658,18 +2698,17 @@ async function startDiagnosis() {
     setEl('scan-sub', msgs[mi][1]);
   }, 2200);
 
+  let diagResult = null;
+  let diagError  = null;
   try {
     const prompt = buildPrompt();
-    const result = true
-      ? await callGemini(prompt)
-      : null;
-    clearInterval(iv);
-    renderDiagnosis(result);
+    diagResult = await callGemini(prompt);
   } catch(err) {
-    console.error('Gemini error:', err);
-    clearInterval(iv);
-    renderDiagnosis(null);
+    console.error('[X-quang] Gemini error:', err.message);
+    diagError = err.message;
   }
+  clearInterval(iv);
+  renderDiagnosis(diagResult, diagError);
 }
 
 function buildPrompt() {
@@ -2686,7 +2725,8 @@ function buildPrompt() {
   const fiP  = fiN>0 ? (nw/fiN*100).toFixed(1) : 0;
   const yFI  = (fiN-nw)>0&&fcf>0 ? Math.ceil((fiN-nw)/(fcf*12)) : '?';
 
-  return `Bạn là chuyên gia tài chính cá nhân Việt Nam 20 năm kinh nghiệm. Trả về CHỈ JSON, không text ngoài.
+  return `Bạn là chuyên gia tài chính cá nhân Việt Nam 20 năm kinh nghiệm.
+YÊU CẦU QUAN TRỌNG: Chỉ trả về JSON object, KHÔNG có markdown fence, KHÔNG có text trước hoặc sau JSON. Bắt đầu ngay bằng { và kết thúc bằng }.
 
 DATA:
 Tên: ${name} | Tuổi: ${age}
@@ -2752,16 +2792,28 @@ async function _geminiRaw(prompt, temp, maxTok) {
 
 // Dùng khi cần JSON output (X-quang chẩn đoán, phân tích thói quen)
 async function callGemini(prompt) {
-  const raw = await _geminiRaw(prompt, 0.3, 2000);
-  // Bóc JSON ra khỏi markdown fence nếu có
-  const clean = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
-  const m = clean.match(/\{[\s\S]*\}/);
-  if (!m) {
-    console.warn('[Gemini JSON] Raw:', raw.slice(0,300));
-    throw new Error('Không parse được JSON. Model trả về: ' + raw.slice(0,120));
+  const raw = await _geminiRaw(prompt, 0.2, 2500);
+  console.log('[Gemini raw]', raw.slice(0, 200)); // debug — luôn hiện trong DevTools
+
+  // Bóc JSON: xóa markdown fence nhiều dạng
+  let clean = raw
+    .replace(/^```json\s*/m, '').replace(/^```\s*/m, '')
+    .replace(/\s*```\s*$/, '').trim();
+
+  // Tìm object JSON đầu tiên
+  const start = clean.indexOf('{');
+  const end   = clean.lastIndexOf('}');
+  if (start === -1 || end === -1) {
+    console.error('[Gemini JSON] Full raw:', raw);
+    throw new Error('AI không trả về JSON hợp lệ. Kiểm tra Console → DevTools để xem chi tiết.');
   }
-  try { return JSON.parse(m[0]); }
-  catch(e) { throw new Error('JSON syntax lỗi: ' + e.message + ' | raw: ' + m[0].slice(0,80)); }
+  const jsonStr = clean.slice(start, end + 1);
+  try {
+    return JSON.parse(jsonStr);
+  } catch(e) {
+    console.error('[Gemini JSON parse] String:', jsonStr.slice(0,300));
+    throw new Error('JSON lỗi cú pháp: ' + e.message);
+  }
 }
 
 // Dùng khi cần text thuần (phân tích tháng, FI advisor, chat)
@@ -2770,14 +2822,44 @@ async function callGeminiText(prompt) {
 }
 
 // ── Render result ──
-function renderDiagnosis(data) {
-  // Fallback tính từ data thực nếu Gemini lỗi
+function renderDiagnosis(data, errorMsg) {
+  const isAI = !!data && !errorMsg;
   if (!data) data = buildFallbackDiagnosis();
 
   document.getElementById('diag-loading').style.display = 'none';
   const res = document.getElementById('diag-result');
   res.style.display = 'block';
   res.style.animation = 'fadeUp .5s ease both';
+
+  // AI vs Fallback banner — luôn hiện rõ cho người dùng biết
+  const existingBanner = document.getElementById('diag-source-banner');
+  if (existingBanner) existingBanner.remove();
+  const banner = document.createElement('div');
+  banner.id = 'diag-source-banner';
+  if (isAI) {
+    const modelName = {'gemini-2.5-flash':'Gemini 2.5 Flash','gemini-2.5-flash-lite':'Gemini 2.5 Flash-Lite','gemini-2.5-pro':'Gemini 2.5 Pro','gemini-3-flash-preview':'Gemini 3 Flash'}[SELECTED_MODEL]||SELECTED_MODEL;
+    banner.innerHTML = `<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#ecfdf5;border:1px solid #10b981;margin-bottom:16px;font-size:12px">
+      <span style="font-size:18px">🤖</span>
+      <div><strong style="color:#065f46">Phân tích bởi ${modelName}</strong><br>
+      <span style="color:#047857">Kết quả được cá nhân hóa dựa trên dữ liệu thực của bạn</span></div>
+    </div>`;
+  } else {
+    const errDetail = errorMsg ? `<br><code style="font-size:10px;color:#9a3412;word-break:break-all">${errorMsg.slice(0,180)}</code>` : '';
+    banner.innerHTML = `<div style="padding:10px 14px;background:#fff7ed;border:1px solid #f97316;margin-bottom:16px;font-size:12px">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="font-size:18px;flex-shrink:0">⚠️</span>
+        <div>
+          <strong style="color:#7c2d12">Chưa kết nối được Gemini AI — hiển thị kết quả tính tay</strong>
+          ${errDetail}
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="retryDiagnosis()" style="background:#6c47ff;color:#fff;border:none;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fh)">🔄 Thử lại với AI</button>
+            <a href="#" onclick="event.preventDefault();showPage('settings')" style="padding:6px 14px;font-size:11px;font-weight:700;color:#6c47ff;border:1px solid #6c47ff;text-decoration:none;font-family:var(--fh)">⚙️ Kiểm tra API Key</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+  res.insertBefore(banner, res.firstChild);
 
   // Score circle
   const score = Math.max(0, Math.min(100, data.score||0));
@@ -2843,6 +2925,35 @@ function renderDiagnosis(data) {
   S.diagnosis = data;
 }
 
+async function retryDiagnosis() {
+  // Remove old banner and result, show loading again
+  const banner = document.getElementById('diag-source-banner');
+  if (banner) banner.remove();
+  document.getElementById('diag-result').style.display = 'none';
+  document.getElementById('diag-loading').style.display = 'flex';
+
+  const msgs = [
+    ['Kết nối Gemini AI...','Đang thử lại...'],
+    ['Phân tích tài chính...','Cá nhân hóa kết quả'],
+  ];
+  let mi = 0;
+  const iv = setInterval(() => {
+    mi = (mi+1)%msgs.length;
+    setEl('scan-txt', msgs[mi][0]);
+    setEl('scan-sub', msgs[mi][1]);
+  }, 1800);
+
+  let diagResult = null, diagError = null;
+  try {
+    diagResult = await callGemini(buildPrompt());
+  } catch(err) {
+    console.error('[Retry] Gemini error:', err.message);
+    diagError = err.message;
+  }
+  clearInterval(iv);
+  renderDiagnosis(diagResult, diagError);
+}
+
 function buildFallbackDiagnosis() {
   const { income, expense } = S.user;
   const ta  = S.assets.reduce((s,a)=>s+(a.value||0),0);
@@ -2902,6 +3013,7 @@ async function enterDashboard() {
           id: uuid(), name: a.name, asset_class: a.asset_class,
           asset_type: a.asset_type, current_value: a.value,
           is_generating_income:'FALSE', monthly_income:0, notes:'',
+          acquisition_date: today(), // ghi nhận ngày nhập để so sánh tăng trưởng
         }});
       }
       // 2. Save debts
@@ -3941,7 +4053,8 @@ async function saveAsset() {
     monthly_income: parseFloat(document.getElementById('asset-monthly-income').value)||0,
   };
   try {
-    await apiPost({ action:'addAsset', data });
+    if (!data.acquisition_date) data.acquisition_date = today();
+  await apiPost({ action:'addAsset', data });
     closeAssetModal(); loadAssets();
   } catch(err) { alert('Lỗi: '+err.message); }
 }
@@ -3967,21 +4080,72 @@ async function loadAiHistory() {
   try {
     const insights = await apiGet('getAiInsights');
     const el = document.getElementById('ai-history-list');
-    if (!insights.length) { el.innerHTML = '<div class="empty-state">Chưa có phân tích nào. Bấm "Phân tích →" để bắt đầu!</div>'; return; }
-    const typeLabel = { monthly_review:'📊 Phân tích tháng', habit_analysis:'🔍 Thói quen', fi_advice:'🏆 Tư vấn FI', initial_diagnosis:'🩻 Chẩn đoán ban đầu' };
+    if (!insights.length) {
+      el.innerHTML = '<div class="empty-state">Chưa có phân tích nào. Bấm "Phân tích →" để bắt đầu!</div>';
+      return;
+    }
+    const typeLabel = {
+      monthly_review   : '📊 Phân tích tháng',
+      habit_analysis   : '🔍 Thói quen',
+      fi_advice        : '🏆 Tư vấn FI',
+      initial_diagnosis: '🩻 Chẩn đoán ban đầu',
+    };
     el.innerHTML = '';
-    insights.slice(0,10).forEach(i => {
+    insights.slice(0, 20).forEach(insight => {
       const div = document.createElement('div');
       div.className = 'ai-insight-card';
+      div.id = 'insight-' + (insight.id || '');
       div.innerHTML = `
         <div class="ai-insight-head">
-          <span class="ai-insight-type">${typeLabel[i.type]||i.type}</span>
-          <span class="ai-insight-date">${fmtDate(i.date)}</span>
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+            <span class="ai-insight-type">${typeLabel[insight.type] || insight.type}</span>
+            <span class="ai-insight-date">${fmtDate(insight.date)}</span>
+          </div>
+          <button onclick="deleteInsight('${insight.id}', this)"
+            title="Xóa phân tích này"
+            style="flex-shrink:0;margin-left:8px;background:none;border:1px solid var(--border);color:var(--text-muted);
+                   cursor:pointer;padding:3px 8px;font-size:11px;line-height:1;transition:all .15s"
+            onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
+            onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+            🗑
+          </button>
         </div>
-        <div class="ai-insight-body">${i.insight_text||'—'}</div>`;
+        <div class="ai-insight-body">${insight.insight_text || '—'}</div>`;
       el.appendChild(div);
     });
-  } catch(err) {}
+  } catch(err) {
+    console.error('loadAiHistory:', err);
+  }
+}
+
+async function deleteInsight(id, btn) {
+  if (!id) return;
+  const card = document.getElementById('insight-' + id);
+  if (!confirm('Xóa phân tích này?')) return;
+
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    await apiPost({ action: 'deleteInsight', data: { id } });
+    // Animate out
+    if (card) {
+      card.style.transition = 'opacity .25s, transform .25s';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(20px)';
+      setTimeout(() => card.remove(), 260);
+    }
+    // Update empty state if no cards left
+    setTimeout(() => {
+      const el = document.getElementById('ai-history-list');
+      if (el && !el.querySelector('.ai-insight-card')) {
+        el.innerHTML = '<div class="empty-state">Chưa có phân tích nào. Bấm "Phân tích →" để bắt đầu!</div>';
+      }
+    }, 300);
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = '🗑';
+    alert('Lỗi xóa: ' + err.message);
+  }
 }
 
 // 7.1 Monthly Analysis
@@ -4207,7 +4371,73 @@ async function sendChat() {
 const LS_SCRIPT_KEY = 'financeos_script_url';
 const LS_GEMINI_KEY = 'financeos_gemini_key';
 
+
+// ══════════════════════════════════════════════════════
+//  CLEAR DATA — xóa dữ liệu theo tháng hoặc toàn bộ
+// ══════════════════════════════════════════════════════
+async function clearDataByMonth() {
+  const monthEl = document.getElementById('clear-month-input');
+  const month = monthEl?.value?.trim();
+  if (!month) {
+    showClearStatus('⚠️ Vui lòng chọn tháng cần xóa', 'var(--warn)');
+    return;
+  }
+
+  const confirmed = confirm(
+    `Xóa toàn bộ giao dịch tháng ${month}?\n\n` +
+    `Dữ liệu sẽ bị xóa khỏi Google Sheets và không thể khôi phục.\n\n` +
+    `Bấm OK để xác nhận.`
+  );
+  if (!confirmed) return;
+
+  showClearStatus('⏳ Đang xóa...', 'var(--text-muted)');
+  try {
+    const res = await apiPost({ action: 'clearTransactionsByMonth', data: { month } });
+    showClearStatus(`✅ Đã xóa giao dịch tháng ${month} (${res.deleted || 0} bản ghi)`, 'var(--green)');
+    if (typeof loadTransactions === 'function') loadTransactions();
+    if (typeof loadDashboard === 'function') loadDashboard();
+  } catch(err) {
+    showClearStatus('❌ Lỗi: ' + err.message, 'var(--danger)');
+  }
+}
+
+async function confirmClearAll() {
+  // Double-confirm vì nguy hiểm
+  const step1 = confirm(
+    '⚠️ XÓA TOÀN BỘ DỮ LIỆU\n\n' +
+    'Sẽ xóa: Giao dịch, Ngân sách, Mục tiêu, Tài sản, Nợ, AI Insights.\n' +
+    'Settings và thông tin cá nhân sẽ được giữ lại.\n\n' +
+    'Bấm OK để tiếp tục.'
+  );
+  if (!step1) return;
+
+  const typed = prompt('Để xác nhận, gõ chính xác chữ: XOA-HET');
+  if (typed?.trim().toUpperCase() !== 'XOA-HET') {
+    alert('Hủy — bạn chưa xác nhận chính xác.');
+    return;
+  }
+
+  showClearStatus('⏳ Đang xóa toàn bộ dữ liệu...', 'var(--text-muted)');
+  try {
+    const res = await apiPost({ action: 'clearAllData', data: {} });
+    showClearStatus(`✅ Đã xóa sạch! (${res.totalDeleted || '?'} bản ghi). Tải lại trang để bắt đầu lại.`, 'var(--green)');
+    // Reset local cache
+    localStorage.removeItem('fo_prod_ob');
+    localStorage.removeItem('financeos_demo_onboarded');
+    setTimeout(() => location.reload(), 2000);
+  } catch(err) {
+    showClearStatus('❌ Lỗi: ' + err.message, 'var(--danger)');
+  }
+}
+
+function showClearStatus(msg, color) {
+  const el = document.getElementById('clear-data-status');
+  if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+// Init clear-month-input với tháng hiện tại
 function loadSettingsPage() {
+
   // Điền URL hiện tại
   const saved = localStorage.getItem(LS_SCRIPT_KEY) || CONFIG.APPS_SCRIPT_URL || '';
   const el = document.getElementById('cfg-script-url');
