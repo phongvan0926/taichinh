@@ -750,7 +750,9 @@ body::before {
 .ai-insight-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
 .ai-insight-type { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
 .ai-insight-date { font-size:11px; color:var(--text-muted); }
-.ai-insight-body { font-size:13px; line-height:1.7; color:var(--text-dim); white-space:pre-wrap; }
+.ai-insight-body { font-size:13px; line-height:1.8; color:var(--text-dim); white-space:pre-wrap; word-break:break-word; }
+.ai-insight-body strong { color:var(--text); }
+.ai-insight-body em { color:var(--accent); font-style:normal; }
 .ai-chat-input { display:flex; gap:10px; margin-top:16px; }
 .ai-chat-input input { flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:var(--fb); font-size:14px; padding:10px 14px; outline:none; }
 .ai-chat-input input:focus { border-color:var(--accent); }
@@ -1884,14 +1886,35 @@ body::before {
                   </select>
                 </div>
               </div>
-              <div class="field"><label>Giá trị hiện tại</label><div class="input-wrap"><input type="number" id="asset-value" placeholder="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div></div>
-              <div class="form-grid form-2col">
-                <div class="field"><label>Sinh thu nhập?</label>
-                  <select id="asset-income-gen" class="tx-filter" style="width:100%;font-size:14px;padding:10px 13px">
-                    <option value="FALSE">Không</option><option value="TRUE">Có</option>
-                  </select>
+              <div class="field"><label>Giá trị hiện tại</label><div class="input-wrap"><input type="number" id="asset-value" placeholder="0" oninput="calcAssetIncomePreview()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div></div>
+              <div class="field"><label>Sinh thu nhập?</label>
+                <select id="asset-income-gen" class="tx-filter" style="width:100%;font-size:14px;padding:10px 13px" onchange="toggleAssetIncomeFields(this.value)">
+                  <option value="FALSE">Không</option><option value="TRUE">Có</option>
+                </select>
+              </div>
+              <div id="asset-income-fields" style="display:none">
+                <div class="field" style="margin-top:12px">
+                  <label>Kiểu thu nhập</label>
+                  <div style="display:flex;gap:0;border:1px solid var(--border);overflow:hidden">
+                    <button type="button" class="income-type-btn active" data-type="vnd"  onclick="selectIncomeType('vnd',this)"  style="flex:1;padding:8px;font-size:11px;font-weight:700;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--fh)">₫/tháng</button>
+                    <button type="button" class="income-type-btn"        data-type="pct_month" onclick="selectIncomeType('pct_month',this)" style="flex:1;padding:8px;font-size:11px;font-weight:700;background:var(--surface2);color:var(--text-dim);border:none;border-left:1px solid var(--border);cursor:pointer;font-family:var(--fh)">%/tháng</button>
+                    <button type="button" class="income-type-btn"        data-type="pct_year"  onclick="selectIncomeType('pct_year',this)"  style="flex:1;padding:8px;font-size:11px;font-weight:700;background:var(--surface2);color:var(--text-dim);border:none;border-left:1px solid var(--border);cursor:pointer;font-family:var(--fh)">%/năm</button>
+                  </div>
                 </div>
-                <div class="field"><label>Thu nhập/tháng</label><div class="input-wrap"><input type="number" id="asset-monthly-income" placeholder="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div></div>
+                <div class="form-grid form-2col" style="margin-top:10px">
+                  <div class="field" id="income-vnd-field">
+                    <label>Số tiền/tháng</label>
+                    <div class="input-wrap"><input type="number" id="asset-monthly-income" placeholder="0" oninput="calcAssetIncomePreview()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div>
+                  </div>
+                  <div class="field" id="income-pct-field" style="display:none">
+                    <label id="income-pct-label">Tỷ suất %/tháng</label>
+                    <div class="input-wrap"><input type="number" id="asset-income-pct" placeholder="0.5" step="0.01" oninput="calcAssetIncomePreview()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">%</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Dự kiến/tháng</label>
+                    <div id="income-preview" style="padding:10px 13px;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-family:var(--fh);font-size:14px;font-weight:700">0 ₫</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2278,6 +2301,20 @@ async function demoApiPost(payload) {
     const idx = DEMO_DATA.ai_insights.findIndex(i => i.id === payload.data.id);
     if (idx !== -1) DEMO_DATA.ai_insights.splice(idx, 1);
   }
+  if (payload.action === 'clearAllData') {
+    DEMO_DATA.dashboard.recentTransactions = [];
+    DEMO_DATA.dashboard.income = 0; DEMO_DATA.dashboard.expense = 0;
+    DEMO_DATA.dashboard.savings = 0; DEMO_DATA.dashboard.investment = 0;
+    DEMO_DATA.budget = []; DEMO_DATA.goals = []; DEMO_DATA.investments = [];
+    DEMO_DATA.debts = []; DEMO_DATA.assets = []; DEMO_DATA.ai_insights = [];
+    return { success: true, totalDeleted: 999 };
+  }
+  if (payload.action === 'clearTransactionsByMonth' && payload.data?.month) {
+    const m = payload.data.month;
+    const before = DEMO_DATA.dashboard.recentTransactions.length;
+    DEMO_DATA.dashboard.recentTransactions = DEMO_DATA.dashboard.recentTransactions.filter(t => !String(t.date||'').startsWith(m));
+    return { success: true, deleted: before - DEMO_DATA.dashboard.recentTransactions.length };
+  }
   return { success: true, id: payload.data?.id || uuid() };
 }
 
@@ -2285,7 +2322,7 @@ async function demoApiPost(payload) {
 //  CONFIG
 // ══════════════════════════════════════════════════════
 const CONFIG = {
-  APPS_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbyx5nwGSHy0gu9Q26aZtowhacgIPs8gzUupkhph5XC9zXCVejWD2_5z5Fc3qWi0CYYm/exec',
+  APPS_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbyW9U-n7uHUxdUChdYqa6OHW-NNOufnttUz6Cl4QOhmdDMOqmxG3RrhIYFY0OeaMl2k/exec',
 
   // Gemini key — XOR-obfuscated (seed=42, step=7) tránh Google API scanner
   // Tự giải mã runtime, không ảnh hưởng hiệu năng
@@ -4107,7 +4144,18 @@ function renderAssets(data) {
   });
 }
 
-function openAssetModal()  { document.getElementById('asset-modal').classList.add('open'); }
+function openAssetModal()  {
+  // Reset income fields
+  _incomeType = 'vnd';
+  toggleAssetIncomeFields('FALSE');
+  const incomeGen = document.getElementById('asset-income-gen');
+  if (incomeGen) incomeGen.value = 'FALSE';
+  document.querySelectorAll('.income-type-btn').forEach((b,i) => {
+    b.style.background = i===0 ? 'var(--accent)' : 'var(--surface2)';
+    b.style.color = i===0 ? '#fff' : 'var(--text-dim)';
+  });
+  document.getElementById('asset-modal').classList.add('open');
+}
 function closeAssetModal() { document.getElementById('asset-modal').classList.remove('open'); }
 
 async function saveAsset() {
@@ -4181,12 +4229,25 @@ async function loadAiHistory() {
             🗑
           </button>
         </div>
-        <div class="ai-insight-body">${insight.insight_text || '—'}</div>`;
+        <div class="ai-insight-body" id="ib-${insight.id}" style="${(insight.insight_text||'').length>500?'max-height:180px;overflow:hidden;mask-image:linear-gradient(to bottom,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,black 60%,transparent 100%)':''}">${fmtAiText(insight.insight_text || '—')}</div>
+        ${(insight.insight_text||'').length > 500
+          ? `<button onclick="expandInsight('${insight.id}',this)" style="margin-top:8px;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fh);width:100%;letter-spacing:.5px">▼ Xem đầy đủ nội dung</button>`
+          : ''
+        }`;
       el.appendChild(div);
     });
   } catch(err) {
     console.error('loadAiHistory:', err);
   }
+}
+
+function expandInsight(id, btn) {
+  const body = document.getElementById('ib-' + id);
+  if (!body) return;
+  body.style.maxHeight = 'none';
+  body.style.maskImage = 'none';
+  body.style.webkitMaskImage = 'none';
+  btn.remove();
 }
 
 async function deleteInsight(id, btn) {
@@ -4267,7 +4328,7 @@ async function analyzeMonthly() {
         </div>
         <div class="ai-insight-body">${html}</div>
       </div>`;
-    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'monthly_review', insight_text: text.slice(0,800), is_read:'FALSE' } });
+    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'monthly_review', insight_text: text.slice(0,8000), is_read:'FALSE' } });
     loadAiHistory();
   } catch(err) {
     resultEl.innerHTML = renderAiError(err.message);
@@ -4332,7 +4393,7 @@ Trả về JSON:
           ${parsed.projected_savings_if_optimized>0?`<div style="background:var(--accent-dim);border:1px solid var(--accent);padding:12px;font-size:13px;color:var(--accent)">💡 Nếu tối ưu: tiết kiệm thêm <strong>${fmt(parsed.projected_savings_if_optimized)}/tháng</strong></div>`:''}
         </div>
       </div>`;
-    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'habit_analysis', insight_text: JSON.stringify(parsed.specific_advice||[]).slice(0,500), is_read:'FALSE' } });
+    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'habit_analysis', insight_text: JSON.stringify(parsed.specific_advice||[]).slice(0,4000), is_read:'FALSE' } });
   } catch(err) {
     resultEl.innerHTML = renderAiError(err.message);
   }
@@ -4391,7 +4452,7 @@ Trả lời tiếng Việt, có số liệu cụ thể, ngắn gọn, như ngư�
         </div>
         <div class="ai-insight-body">${fmtAiText(text)}</div>
       </div>`;
-    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'fi_advice', insight_text: text.slice(0,800), is_read:'FALSE' } });
+    await apiPost({ action:'saveInsight', data:{ id:uuid(), date:today(), type:'fi_advice', insight_text: text.slice(0,8000), is_read:'FALSE' } });
   } catch(err) {
     resultEl.innerHTML = renderAiError(err.message);
   }
@@ -4491,19 +4552,77 @@ async function confirmClearAll() {
   showClearStatus('⏳ Đang xóa toàn bộ dữ liệu...', 'var(--text-muted)');
   try {
     const res = await apiPost({ action: 'clearAllData', data: {} });
-    showClearStatus(`✅ Đã xóa sạch! (${res.totalDeleted || '?'} bản ghi). Tải lại trang để bắt đầu lại.`, 'var(--green)');
-    // Reset local cache
+    // Reset onboarding cache — sẽ hiện wizard X-quang lại sau reload
     localStorage.removeItem('fo_prod_ob');
     localStorage.removeItem('financeos_demo_onboarded');
-    setTimeout(() => location.reload(), 2000);
+    const n = res.totalDeleted || '?';
+    showClearStatus(`✅ Đã xóa ${n} bản ghi. Đang tải lại...`, 'var(--green)');
+    setTimeout(() => location.reload(), 1500);
   } catch(err) {
-    showClearStatus('❌ Lỗi: ' + err.message, 'var(--danger)');
+    // If AppScript doesn't support clearAllData yet, give clear instructions
+    const isNotImpl = err.message.includes('not implemented') || err.message.includes('undefined') || err.message.includes('clearAllData');
+    if (isNotImpl) {
+      showClearStatus(
+        '⚠️ AppScript chưa hỗ trợ lệnh này. Vào Google Sheets → chọn từng sheet → xóa tất cả dòng (giữ header). Hoặc thêm action clearAllData vào Apps Script.',
+        'var(--warn)'
+      );
+    } else {
+      showClearStatus('❌ Lỗi: ' + err.message, 'var(--danger)');
+    }
   }
 }
 
 function showClearStatus(msg, color) {
   const el = document.getElementById('clear-data-status');
   if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+
+// ══════════════════════════════════════════════════════
+//  ASSET INCOME TYPE SELECTOR
+// ══════════════════════════════════════════════════════
+let _incomeType = 'vnd'; // vnd | pct_month | pct_year
+
+function toggleAssetIncomeFields(val) {
+  const fields = document.getElementById('asset-income-fields');
+  if (fields) fields.style.display = val === 'TRUE' ? 'block' : 'none';
+}
+
+function selectIncomeType(type, btn) {
+  _incomeType = type;
+  // Update button styles
+  document.querySelectorAll('.income-type-btn').forEach(b => {
+    const active = b.dataset.type === type;
+    b.style.background = active ? 'var(--accent)' : 'var(--surface2)';
+    b.style.color = active ? '#fff' : 'var(--text-dim)';
+  });
+  // Toggle fields
+  const vndField = document.getElementById('income-vnd-field');
+  const pctField = document.getElementById('income-pct-field');
+  const pctLabel = document.getElementById('income-pct-label');
+  if (vndField) vndField.style.display = type === 'vnd' ? 'block' : 'none';
+  if (pctField) pctField.style.display = type !== 'vnd' ? 'block' : 'none';
+  if (pctLabel) pctLabel.textContent = type === 'pct_month' ? 'Tỷ suất %/tháng' : 'Tỷ suất %/năm';
+  calcAssetIncomePreview();
+}
+
+function calcAssetIncomePreview() {
+  const assetVal = parseFloat(document.getElementById('asset-value')?.value) || 0;
+  let monthly = 0;
+  if (_incomeType === 'vnd') {
+    monthly = parseFloat(document.getElementById('asset-monthly-income')?.value) || 0;
+  } else if (_incomeType === 'pct_month') {
+    const pct = parseFloat(document.getElementById('asset-income-pct')?.value) || 0;
+    monthly = assetVal * pct / 100;
+  } else if (_incomeType === 'pct_year') {
+    const pct = parseFloat(document.getElementById('asset-income-pct')?.value) || 0;
+    monthly = assetVal * pct / 100 / 12;
+  }
+  const preview = document.getElementById('income-preview');
+  if (preview) preview.textContent = fmt(Math.round(monthly)) + ' ₫';
+  // Sync the hidden monthly-income field for saving
+  const hiddenField = document.getElementById('asset-monthly-income');
+  if (hiddenField && _incomeType !== 'vnd') hiddenField.value = Math.round(monthly);
 }
 
 // Init clear-month-input với tháng hiện tại
