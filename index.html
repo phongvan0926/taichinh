@@ -1151,13 +1151,13 @@ body::before {
               <div class="model-card-desc">Rẻ nhất · nhanh nhất<br>Tiết kiệm quota</div>
             </div>
 
-            <div class="model-card" data-model="gemini-2.5-flash" onclick="selectModel(this)">
+            <div class="model-card" data-model="gemini-2.5-pro" onclick="selectModel(this)">
               <span class="model-card-badge badge-smart">PRO</span>
               <div class="model-card-name">2.5 Pro</div>
               <div class="model-card-desc">Phân tích sâu nhất<br>Paid tier</div>
             </div>
 
-            <div class="model-card" data-model="gemini-2.5-pro" onclick="selectModel(this)">
+            <div class="model-card" data-model="gemini-3-flash-preview" onclick="selectModel(this)">
               <span class="model-card-badge badge-new">NEW</span>
               <div class="model-card-name">3 Flash</div>
               <div class="model-card-desc">Thế hệ mới nhất<br>Preview · Free</div>
@@ -1166,8 +1166,16 @@ body::before {
           </div>
         </div>
 
-        <div class="btn-row">
+        <!-- Test API -->
+        <div id="api-test-result" style="display:none;margin-top:12px;padding:10px 14px;font-size:12px;line-height:1.7;border-radius:4px"></div>
+
+        <div class="btn-row" style="flex-wrap:wrap;gap:8px">
           <button class="btn-secondary" onclick="obGoTo(2)">← Quay lại</button>
+          <button id="test-api-btn" class="btn-secondary"
+            style="border-color:var(--accent);color:var(--accent);font-size:11px;padding:9px 16px"
+            onclick="testGeminiApi()">
+            🔌 Test kết nối AI
+          </button>
           <button class="btn-primary" onclick="startDiagnosis()">Phân tích AI 🩻</button>
         </div>
       </div>
@@ -2322,7 +2330,7 @@ async function demoApiPost(payload) {
 //  CONFIG
 // ══════════════════════════════════════════════════════
 const CONFIG = {
-  APPS_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbyW9U-n7uHUxdUChdYqa6OHW-NNOufnttUz6Cl4QOhmdDMOqmxG3RrhIYFY0OeaMl2k/exec',
+  APPS_SCRIPT_URL : 'https://script.google.com/macros/s/AKfycbx_hoYnW8-d1nzUzgO5BcM3zKB4j7RscLl2ufSzVOCa2s4ySllZDsE8IAZDGykGkSd8/exec',
 
   // Gemini key — XOR-obfuscated (seed=42, step=7) tránh Google API scanner
   // Tự giải mã runtime, không ảnh hưởng hiệu năng
@@ -2509,12 +2517,130 @@ function selectAiModel(btn) {
   });
 }
 
+
+// ══════════════════════════════════════════════════════
+//  TEST GEMINI API — kiểm tra model trước khi X-quang
+// ══════════════════════════════════════════════════════
+async function testGeminiApi() {
+  const btn    = document.getElementById('test-api-btn');
+  const result = document.getElementById('api-test-result');
+  if (!btn || !result) return;
+
+  const modelNames = {
+    'gemini-2.5-flash'      : 'Gemini 2.5 Flash',
+    'gemini-2.5-flash-lite' : 'Gemini 2.5 Flash-Lite',
+    'gemini-2.5-pro'        : 'Gemini 2.5 Pro',
+    'gemini-3-flash-preview': 'Gemini 3 Flash (Preview)',
+  };
+  const name = modelNames[SELECTED_MODEL] || SELECTED_MODEL;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang test...';
+  result.style.display = 'block';
+  result.style.background = 'var(--surface2)';
+  result.style.border = '1px solid var(--border)';
+  result.style.color  = 'var(--text-muted)';
+  result.innerHTML = `🔌 Đang kết nối <strong>${name}</strong>...`;
+
+  const t0 = Date.now();
+  try {
+    const key = (localStorage.getItem('financeos_gemini_key') || CONFIG.GEMINI_API_KEY);
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${SELECTED_MODEL}:generateContent?key=${key}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Trả lời đúng 1 từ: OK' }] }],
+        generationConfig: { temperature: 0, maxOutputTokens: 10 },
+      }),
+    });
+
+    const ms = Date.now() - t0;
+
+    if (res.status === 429) {
+      result.style.background = '#fef3c7';
+      result.style.border = '1px solid var(--warn)';
+      result.style.color  = '#78350f';
+      result.innerHTML =
+        `⚡ <strong>${name}</strong> — Đang bị rate limit (429)<br>` +
+        `→ Quota hôm nay có thể đã hết, thử model khác hoặc chờ vài phút<br>` +
+        `<span style="color:var(--text-muted);font-size:10px">Thời gian: ${ms}ms</span>`;
+      btn.disabled = false; btn.textContent = '🔌 Test lại';
+      return;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      result.style.background = 'var(--danger-dim)';
+      result.style.border = '1px solid var(--danger)';
+      result.style.color  = 'var(--danger)';
+      result.innerHTML =
+        `❌ <strong>API Key không hợp lệ</strong> (${res.status})<br>` +
+        `→ Vào ⚙️ Cài đặt → nhập API Key mới từ <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com/apikey</a>`;
+      btn.disabled = false; btn.textContent = '🔌 Test lại';
+      return;
+    }
+
+    if (!res.ok) {
+      let detail = '';
+      try { const ej = await res.json(); detail = ej.error?.message || ''; } catch(e) {}
+      result.style.background = 'var(--danger-dim)';
+      result.style.border = '1px solid var(--danger)';
+      result.style.color  = 'var(--danger)';
+      result.innerHTML =
+        `❌ <strong>${name}</strong> lỗi ${res.status}<br>` +
+        `<code style="font-size:10px">${detail.slice(0,120)}</code>`;
+      btn.disabled = false; btn.textContent = '🔌 Test lại';
+      return;
+    }
+
+    const d = await res.json();
+    const reply = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '?';
+
+    result.style.background = 'var(--green-dim)';
+    result.style.border = '1px solid var(--green)';
+    result.style.color  = '#065f46';
+    result.innerHTML =
+      `✅ <strong>${name}</strong> hoạt động tốt!<br>` +
+      `⚡ Thời gian phản hồi: <strong>${ms}ms</strong> · ` +
+      `Phản hồi thử: "<em>${reply}</em>"<br>` +
+      `<span style="font-size:11px;color:#047857">→ Sẵn sàng Phân tích AI 🩻</span>`;
+
+    btn.style.background = 'var(--green-dim)';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+    btn.textContent = '✅ Đã kết nối';
+    // Auto-enable Phân tích button as a hint
+    const diagBtn = document.querySelector('#ob-step-3 .btn-primary');
+    if (diagBtn) { diagBtn.style.animation = 'pulse 1s ease 2'; }
+
+  } catch(err) {
+    result.style.background = 'var(--danger-dim)';
+    result.style.border = '1px solid var(--danger)';
+    result.style.color  = 'var(--danger)';
+    result.innerHTML =
+      `❌ Không kết nối được: <strong>${err.message.slice(0,100)}</strong><br>` +
+      `→ Kiểm tra kết nối mạng hoặc API Key`;
+    btn.disabled = false; btn.textContent = '🔌 Test lại';
+  }
+}
+
 function selectModel(card) {
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
   SELECTED_MODEL = card.dataset.model;
 
-  // Update scan-sub text để user biết model nào đang dùng
+  // Reset test button khi đổi model
+  const testBtn = document.getElementById('test-api-btn');
+  if (testBtn) {
+    testBtn.disabled = false;
+    testBtn.textContent = '🔌 Test kết nối AI';
+    testBtn.style.background = '';
+    testBtn.style.borderColor = 'var(--accent)';
+    testBtn.style.color = 'var(--accent)';
+  }
+  const testResult = document.getElementById('api-test-result');
+  if (testResult) testResult.style.display = 'none';
+
   const nameMap = {
     'gemini-2.5-flash'      : 'Gemini 2.5 Flash',
     'gemini-2.5-flash-lite' : 'Gemini 2.5 Flash-Lite',
@@ -2543,8 +2669,9 @@ async function apiGet(action, params = {}) {
   return Promise.race([fetchPromise, timeout]);
 }
 
-async function apiPost(payload) {
+async function apiPost(payload, timeoutMs) {
   if (DEMO_MODE) return demoApiPost(payload);
+  const ms = timeoutMs || 15000;
   const fetchPromise = fetch(CONFIG.APPS_SCRIPT_URL, {
     method  : 'POST',
     redirect: 'follow',
@@ -2554,10 +2681,10 @@ async function apiPost(payload) {
     .then(r => r.text())
     .then(text => {
       try { return JSON.parse(text); }
-      catch(e) { throw new Error('Invalid JSON: ' + text.slice(0,120)); }
+      catch(e) { throw new Error('AppScript trả về không phải JSON: ' + text.slice(0,200)); }
     });
   const timeout = new Promise((_, rej) =>
-    setTimeout(() => rej(new Error('AppScript timeout (15s)')), 15000));
+    setTimeout(() => rej(new Error('AppScript timeout (' + (ms/1000) + 's)')), ms));
   return Promise.race([fetchPromise, timeout]);
 }
 
@@ -4524,7 +4651,7 @@ async function clearDataByMonth() {
 
   showClearStatus('⏳ Đang xóa...', 'var(--text-muted)');
   try {
-    const res = await apiPost({ action: 'clearTransactionsByMonth', data: { month } });
+    const res = await apiPost({ action: 'clearTransactionsByMonth', data: { month } }, 60000);
     showClearStatus(`✅ Đã xóa giao dịch tháng ${month} (${res.deleted || 0} bản ghi)`, 'var(--green)');
     if (typeof loadTransactions === 'function') loadTransactions();
     if (typeof loadDashboard === 'function') loadDashboard();
@@ -4549,9 +4676,16 @@ async function confirmClearAll() {
     return;
   }
 
-  showClearStatus('⏳ Đang xóa toàn bộ dữ liệu...', 'var(--text-muted)');
+  showClearStatus('⏳ Đang xóa toàn bộ dữ liệu... (có thể mất 10–30 giây)', 'var(--text-muted)');
+  // Countdown để user biết app đang chạy, không bị treo
+  let sec = 0;
+  const countdown = setInterval(() => {
+    sec++;
+    showClearStatus('⏳ Đang xóa... ' + sec + 's (có thể mất 30–60 giây, vui lòng chờ)', 'var(--text-muted)');
+  }, 1000);
   try {
-    const res = await apiPost({ action: 'clearAllData', data: {} });
+    const res = await apiPost({ action: 'clearAllData', data: {} }, 90000);
+    clearInterval(countdown);
     // Reset onboarding cache — sẽ hiện wizard X-quang lại sau reload
     localStorage.removeItem('fo_prod_ob');
     localStorage.removeItem('financeos_demo_onboarded');
@@ -4560,6 +4694,7 @@ async function confirmClearAll() {
     setTimeout(() => location.reload(), 1500);
   } catch(err) {
     // If AppScript doesn't support clearAllData yet, give clear instructions
+    clearInterval(countdown);
     const isNotImpl = err.message.includes('not implemented') || err.message.includes('undefined') || err.message.includes('clearAllData');
     if (isNotImpl) {
       showClearStatus(
