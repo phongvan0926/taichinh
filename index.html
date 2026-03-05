@@ -14,31 +14,38 @@
    Typography: Syne (display) + DM Sans (body)
    ════════════════════════════════════════════════════ */
 :root {
-  --bg:         #07090d;
-  --bg2:        #0b0f15;
-  --surface:    #0f1520;
-  --surface2:   #141d2b;
-  --surface3:   #192333;
-  --border:     #1c2a3a;
-  --border2:    #243344;
-  --accent:     #10b981;
-  --accent-hi:  #34d399;
-  --accent-dim: #0a3d2b;
-  --accent-glow:rgba(16,185,129,.2);
+  /* ── Light energetic palette ── */
+  --bg:         #f6f8ff;
+  --bg2:        #eef1fc;
+  --surface:    #ffffff;
+  --surface2:   #f0f3ff;
+  --surface3:   #e6ebff;
+  --border:     #dde2f5;
+  --border2:    #c8ceec;
+  /* ── Electric Violet primary ── */
+  --accent:     #6c47ff;
+  --accent-hi:  #8b6bff;
+  --accent-dim: #ede8ff;
+  --accent-glow:rgba(108,71,255,.18);
+  /* ── Semantic colours ── */
   --warn:       #f59e0b;
-  --warn-dim:   #3d2a00;
+  --warn-dim:   #fffbeb;
   --danger:     #ef4444;
-  --danger-dim: #3b0f0f;
+  --danger-dim: #fff5f5;
   --blue:       #3b82f6;
-  --blue-dim:   #1e3a6e;
-  --purple:     #8b5cf6;
-  --text:       #dde5f0;
-  --text-dim:   #7a92aa;
-  --text-muted: #3d5469;
+  --blue-dim:   #eff6ff;
+  --purple:     #a855f7;
+  --green:      #10b981;
+  --green-dim:  #ecfdf5;
+  /* ── Text ── */
+  --text:       #1c1f3a;
+  --text-dim:   #4c5280;
+  --text-muted: #9ba3c4;
+  /* ── Typography ── */
   --fh:         'Syne', sans-serif;
   --fb:         'DM Sans', sans-serif;
-  --glow:       0 0 24px rgba(16,185,129,.18);
-  --shadow:     0 8px 32px rgba(0,0,0,.5);
+  --glow:       0 4px 24px rgba(108,71,255,.2);
+  --shadow:     0 4px 16px rgba(108,71,255,.1);
 }
 
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
@@ -53,15 +60,16 @@ body {
   overflow-x:hidden;
 }
 
-/* Scanline effect */
-body::after {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);
+/* Ambient gradient */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
+  background: radial-gradient(ellipse 70% 50% at 0% 0%, rgba(108,71,255,.07) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 40% at 100% 100%, rgba(59,130,246,.06) 0%, transparent 60%);
 }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-track { background:var(--bg2); }
 ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
 
 /* ════════════════════════════════════════════════════
@@ -76,6 +84,7 @@ body::after {
 
 /* ─── Sidebar ─── */
 .sidebar {
+  background: linear-gradient(175deg, #1a1c3e 0%, #2d1f6e 100%) !important;
   width:220px;
   min-width:220px;
   background:var(--bg2);
@@ -168,7 +177,7 @@ body::after {
 }
 
 /* Top bar */
-.topbar {
+.topbar { box-shadow:0 1px 0 var(--border);
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -208,7 +217,7 @@ body::after {
 /* ════════════════════════════════════════════════════
    ONBOARDING OVERLAY
    ════════════════════════════════════════════════════ */
-#onboarding-overlay {
+#onboarding-overlay { background: linear-gradient(135deg, #f6f8ff 0%, #ede8ff 40%, #f0f6ff 100%);
   display:none;
   position:fixed; inset:0;
   background:var(--bg);
@@ -399,7 +408,8 @@ body::after {
 
 /* Buttons */
 .btn-primary {
-  background:var(--accent); color:#000; border:none; font-family:var(--fh);
+  background: linear-gradient(135deg, #6c47ff 0%, #9b6bff 100%);
+  color:#fff; border:none; font-family:var(--fh);
   font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
   padding:13px 28px; cursor:pointer; transition:all .2s;
   display:inline-flex; align-items:center; gap:7px;
@@ -544,7 +554,8 @@ body::after {
 
 /* Initial loader */
 #init-loader {
-  position:fixed; inset:0; background:var(--bg);
+  position:fixed; inset:0;
+  background: linear-gradient(135deg, #f6f8ff 0%, #ede8ff 100%);
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:1000;
 }
 .loader-ring {
@@ -601,7 +612,7 @@ body::after {
   font-size:8px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
   padding:1px 5px;
 }
-.badge-free  { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent); }
+.badge-free  { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-hi); font-weight:800; }
 .badge-fast  { background:var(--blue-dim);   color:var(--blue);   border:1px solid var(--blue); }
 .badge-smart { background:var(--warn-dim);   color:var(--warn);   border:1px solid var(--warn); }
 .badge-new   { background:#1a0a2e; color:var(--purple); border:1px solid var(--purple); }
@@ -610,7 +621,7 @@ body::after {
 /* ══ MODULE SHARED ══ */
 .module-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
 @media(max-width:640px){ .module-grid-2 { grid-template-columns:1fr; } }
-.card { background:var(--surface); border:1px solid var(--border); padding:18px 20px; }
+.card { background:var(--surface); border:1px solid var(--border); padding:18px 20px; box-shadow:0 2px 12px rgba(108,71,255,.07); border-radius:2px; }
 .card-title { font-family:var(--fh); font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:7px; }
 .card-title::before { content:''; display:inline-block; width:2px; height:12px; background:var(--accent); }
 .empty-state { padding:40px; text-align:center; color:var(--text-muted); font-size:13px; border:1px dashed var(--border); }
@@ -867,6 +878,29 @@ body::after {
   .mob-nav-item .nav-ico { font-size:18px; line-height:1; }
 }
 #mobile-nav { display:none; }
+
+/* ── Batch Import ── */
+.batch-tab-btn { padding:8px 16px; font-family:var(--fh); font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); cursor:pointer;
+  border-bottom:2px solid transparent; transition:all .2s; background:none; border-top:none;
+  border-left:none; border-right:none; }
+.batch-tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+.batch-drop { border:2px dashed var(--border); padding:32px 24px; text-align:center;
+  cursor:pointer; transition:all .2s; background:var(--surface2); border-radius:6px; }
+.batch-drop:hover, .batch-drop.over { border-color:var(--accent); background:var(--accent-dim); }
+.batch-drop-icon { font-size:40px; margin-bottom:10px; }
+.batch-drop-title { font-weight:700; color:var(--text); margin-bottom:4px; font-size:14px; }
+.batch-drop-sub { font-size:12px; color:var(--text-muted); }
+#batch-img-previews img { height:80px; width:80px; object-fit:cover; border:2px solid var(--border);
+  border-radius:4px; cursor:pointer; transition:border-color .15s; }
+#batch-img-previews img:hover { border-color:var(--accent); }
+.batch-confirm-row td { padding:6px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+.batch-confirm-row:hover td { background:var(--surface2); }
+.batch-edit { background:transparent; border:none; color:var(--text); font-family:var(--fb);
+  font-size:12px; padding:2px 4px; outline:none; width:100%; }
+.batch-edit:focus { background:var(--surface2); border-radius:3px; }
+.batch-select { background:var(--surface); border:1px solid var(--border); color:var(--text);
+  font-family:var(--fb); font-size:12px; padding:2px 4px; outline:none; }
 </style>
 
 <!-- Chart.js - nhẹ, không cần React, tải nhanh -->
@@ -1222,7 +1256,7 @@ body::after {
     </div>
 
     <div class="sidebar-footer">
-      Dữ liệu lưu trên<br><strong>Google Sheets của bạn</strong>
+      <span style='color:rgba(160,165,210,.7)'>Dữ liệu lưu trên</span><br><strong style='color:#a78bfa'>Google Sheets của bạn</strong>
     </div>
   </nav>
 
@@ -1327,7 +1361,7 @@ body::after {
         </select>
         <div style="margin-left:auto;display:flex;gap:8px">
           <button class="btn-secondary" style="padding:7px 14px;font-size:11px" onclick="exportTxCSV()">⬇ CSV</button>
-          <button class="btn-primary" style="padding:7px 14px;font-size:11px" onclick="openTxModal()">＋ Thêm</button>
+          <button class="btn-secondary" style="padding:7px 14px;font-size:11px;margin-right:6px" onclick="openBatchModal()">📥 Nhập loạt</button><button class="btn-primary"   style="padding:7px 14px;font-size:11px" onclick="openTxModal()">＋ Thêm</button>
         </div>
       </div>
 
@@ -1366,13 +1400,21 @@ body::after {
           <button class="modal-close" onclick="closeTxModal()">✕</button>
         </div>
         <div class="modal-body">
-          <!-- AI Image scan -->
-          <div style="margin-bottom:16px;padding:12px;background:var(--bg);border:1px solid var(--border)">
-            <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);margin-bottom:8px">📸 QUÉT ẢNH BẰNG AI</div>
-            <div style="display:flex;gap:8px;align-items:center">
+          <!-- AI scan panel -->
+          <div style="margin-bottom:16px;padding:14px;background:var(--surface2);border:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+              <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase">🤖 AI Scan</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap" id="scan-model-btns">
+                <div class="ai-model-btn active" data-model="gemini-2.5-flash"       onclick="selectScanModel(this)">2.5 Flash</div>
+                <div class="ai-model-btn"        data-model="gemini-2.5-flash-lite"  onclick="selectScanModel(this)">Flash-Lite</div>
+                <div class="ai-model-btn"        data-model="gemini-2.5-pro"         onclick="selectScanModel(this)">2.5 Pro</div>
+                <div class="ai-model-btn"        data-model="gemini-3-flash-preview"  onclick="selectScanModel(this)">3 Flash</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
               <input type="file" id="receipt-file" accept="image/*" capture="environment" style="display:none" onchange="scanImage(this)"/>
               <button class="btn-secondary" style="font-size:11px;padding:7px 14px" onclick="document.getElementById('receipt-file').click()">📷 Chụp / Chọn ảnh</button>
-              <span style="font-size:11px;color:var(--text-muted)">Tự động điền form từ bill, SMS ngân hàng</span>
+              <button class="btn-secondary" style="font-size:11px;padding:7px 14px;background:var(--accent-dim);border-color:var(--accent);color:var(--accent)" onclick="openBatchModal()">📥 Nhập nhiều giao dịch</button>
             </div>
             <div id="img-preview-area" style="display:none">
               <div class="img-preview-wrap" id="img-preview-wrap">
@@ -1435,6 +1477,120 @@ body::after {
         <div class="modal-footer">
           <button class="btn-secondary" onclick="closeTxModal()">Hủy</button>
           <button class="btn-primary" id="tx-save-btn" onclick="saveTx()">Lưu giao dịch</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ BATCH IMPORT MODAL ══ -->
+    <div class="modal-overlay" id="batch-modal">
+      <div class="modal" style="max-width:720px;max-height:92vh;display:flex;flex-direction:column">
+        <div class="modal-head" style="flex-shrink:0">
+          <div class="modal-title">📥 Nhập hàng loạt từ Ảnh / SMS / File</div>
+          <button class="modal-close" onclick="closeBatchModal()">✕</button>
+        </div>
+
+        <!-- STEP 1: INPUT -->
+        <div id="batch-step-input" style="flex:1;overflow-y:auto;padding:16px 20px">
+
+          <!-- AI Model bar -->
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+            <span style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase">🤖 AI Model</span>
+            <div id="batch-model-btns" style="display:flex;gap:6px;flex-wrap:wrap">
+              <div class="ai-model-btn active" data-model="gemini-2.5-flash"       onclick="selectBatchModel(this)">2.5 Flash <small>FREE</small></div>
+              <div class="ai-model-btn"        data-model="gemini-2.5-flash-lite"  onclick="selectBatchModel(this)">Flash-Lite <small>LITE</small></div>
+              <div class="ai-model-btn"        data-model="gemini-2.5-pro"         onclick="selectBatchModel(this)">2.5 Pro <small>PRO</small></div>
+              <div class="ai-model-btn"        data-model="gemini-3-flash-preview"  onclick="selectBatchModel(this)">3 Flash <small>NEW</small></div>
+            </div>
+          </div>
+
+          <!-- Input type tabs -->
+          <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:16px">
+            <button class="batch-tab-btn active" id="btab-image" onclick="switchBatchTab('image')">📸 Ảnh / Screenshot</button>
+            <button class="batch-tab-btn"        id="btab-text"  onclick="switchBatchTab('text')">💬 SMS / Text</button>
+            <button class="batch-tab-btn"        id="btab-file"  onclick="switchBatchTab('file')">📄 PDF / Word</button>
+          </div>
+
+          <!-- Tab: Image -->
+          <div id="batch-tab-image">
+            <div class="batch-drop" id="batch-drop-zone"
+              onclick="document.getElementById('batch-img-input').click()"
+              ondragover="event.preventDefault();this.classList.add('over')"
+              ondragleave="this.classList.remove('over')"
+              ondrop="handleBatchImageDrop(event)">
+              <div class="batch-drop-icon">🖼️</div>
+              <div class="batch-drop-title">Kéo thả hoặc bấm để chọn ảnh</div>
+              <div class="batch-drop-sub">Screenshot lịch sử giao dịch, sao kê, bill thanh toán — JPG, PNG, WEBP</div>
+            </div>
+            <input type="file" id="batch-img-input" accept="image/*" multiple style="display:none" onchange="handleBatchImageFiles(this.files)"/>
+            <div id="batch-img-previews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"></div>
+          </div>
+
+          <!-- Tab: Text/SMS -->
+          <div id="batch-tab-text" style="display:none">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">
+              Paste SMS ngân hàng, lịch sử giao dịch, hoặc nhập tay danh sách thu chi
+            </div>
+            <textarea id="batch-text-input" rows="11" style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:13px;resize:vertical;outline:none;line-height:1.7;border-radius:4px"
+              placeholder="Ví dụ:&#10;[Agribank] 15/03 10:30 - Chi 85,000 VND - Grab Food&#10;[VCB] 15/03 08:00 - Thu 25,000,000 VND - Luong thang 3&#10;[MB] 14/03 21:15 - Chi 320,000 VND - Uniqlo&#10;---&#10;Hoặc dán nội dung SMS OTP biến động số dư..."></textarea>
+          </div>
+
+          <!-- Tab: File PDF/Word -->
+          <div id="batch-tab-file" style="display:none">
+            <div class="batch-drop" onclick="document.getElementById('batch-doc-input').click()">
+              <div class="batch-drop-icon">📂</div>
+              <div class="batch-drop-title">Chọn file PDF hoặc Word (.docx)</div>
+              <div class="batch-drop-sub">Sao kê ngân hàng PDF, bảng tổng hợp chi tiêu Word...</div>
+            </div>
+            <input type="file" id="batch-doc-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="handleBatchDocFile(this.files[0])"/>
+            <div id="batch-file-status" style="margin-top:10px;font-size:13px;color:var(--text-muted)"></div>
+          </div>
+
+          <!-- Extract button -->
+          <div style="margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <button class="btn-primary" style="padding:12px 28px;font-size:13px" id="batch-extract-btn" onclick="runBatchExtract()">
+              🤖 Trích xuất giao dịch →
+            </button>
+            <div id="batch-extract-status" style="font-size:12px;color:var(--text-muted)"></div>
+          </div>
+        </div>
+
+        <!-- STEP 2: CONFIRM TABLE -->
+        <div id="batch-step-confirm" style="display:none;flex:1;overflow-y:auto;padding:0 20px 16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 12px;flex-wrap:wrap;gap:8px">
+            <div>
+              <strong id="batch-count-label" style="color:var(--text)">0 giao dịch</strong>
+              <span style="font-size:12px;color:var(--text-muted);margin-left:8px">— kiểm tra và chỉnh sửa trước khi lưu</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button onclick="batchSelectAll(true)"  class="btn-secondary" style="font-size:11px;padding:5px 10px">Chọn tất cả</button>
+              <button onclick="batchSelectAll(false)" class="btn-secondary" style="font-size:11px;padding:5px 10px">Bỏ chọn</button>
+              <button onclick="batchGoBack()"         class="btn-secondary" style="font-size:11px;padding:5px 10px">← Nhập lại</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--border);border-radius:4px">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:580px">
+              <thead>
+                <tr style="background:var(--surface2)">
+                  <th style="padding:9px 8px;text-align:center;width:32px;border-bottom:1px solid var(--border)">✓</th>
+                  <th style="padding:9px 8px;text-align:left;border-bottom:1px solid var(--border)">Ngày</th>
+                  <th style="padding:9px 8px;text-align:left;border-bottom:1px solid var(--border)">Mô tả</th>
+                  <th style="padding:9px 8px;text-align:left;border-bottom:1px solid var(--border)">Danh mục</th>
+                  <th style="padding:9px 8px;text-align:left;border-bottom:1px solid var(--border)">Loại</th>
+                  <th style="padding:9px 8px;text-align:right;border-bottom:1px solid var(--border)">Số tiền (₫)</th>
+                  <th style="padding:9px 8px;text-align:center;width:32px;border-bottom:1px solid var(--border)">🗑</th>
+                </tr>
+              </thead>
+              <tbody id="batch-confirm-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="flex-shrink:0">
+          <button class="btn-secondary" onclick="closeBatchModal()">Hủy</button>
+          <button class="btn-primary" id="batch-save-btn" onclick="saveBatchTransactions()" style="display:none">
+            💾 Lưu giao dịch đã chọn
+          </button>
         </div>
       </div>
     </div>
@@ -2124,15 +2280,29 @@ window.addEventListener('DOMContentLoaded', async () => {
     const settings = await apiGet('getSettings');
     clearTimeout(bootTimeout);
     S.settings = settings;
-    if (String(settings.onboarding_completed) === 'true') {
+    const done = String(settings.onboarding_completed) === 'true';
+    if (done) {
+      localStorage.setItem('fo_prod_ob', '1'); // cache flag
       hideLoader(); showApp(); loadDashboard();
     } else {
-      hideLoader(); showOnboarding();
+      // Double-check local cache (AppScript may return stale data briefly)
+      if (localStorage.getItem('fo_prod_ob') === '1') {
+        hideLoader(); showApp(); loadDashboard();
+      } else {
+        hideLoader(); showOnboarding();
+      }
     }
   } catch (err) {
     clearTimeout(bootTimeout);
     console.error('[FinanceOS] Boot error:', err.message);
-    showBootError(err.message);
+    // If cached as onboarded, go to dashboard anyway (network issue)
+    if (localStorage.getItem('fo_prod_ob') === '1') {
+      console.warn('[FinanceOS] Falling back to cached onboarding state');
+      S.settings = S.settings || {};
+      hideLoader(); showApp(); loadDashboard();
+    } else {
+      showBootError(err.message);
+    }
   }
 });
 
@@ -2767,8 +2937,12 @@ async function enterDashboard() {
     }
 
     btn.textContent = '✓ Xong!';
-    // Đánh dấu đã hoàn thành onboarding (cả demo lẫn production)
-    if (DEMO_MODE) localStorage.setItem('financeos_demo_onboarded', 'true');
+    // Cache onboarding state locally — prevents re-showing on reload
+    if (DEMO_MODE) {
+      localStorage.setItem('financeos_demo_onboarded', 'true');
+    } else {
+      localStorage.setItem('fo_prod_ob', '1');
+    }
 
     setTimeout(() => {
       document.getElementById('onboarding-overlay').classList.remove('visible');
@@ -4178,6 +4352,7 @@ function restartOnboarding() {
   // Reset demo flag + S state
   if (DEMO_MODE) {
     localStorage.removeItem('financeos_demo_onboarded');
+    localStorage.removeItem('fo_prod_ob');
     DEMO_DATA.settings.onboarding_completed = 'false';
   }
   S.user    = { name:'', age:0, income:0, expense:0 };
@@ -4213,6 +4388,262 @@ function applyStoredConfig() {
   if (storedUrl) CONFIG.APPS_SCRIPT_URL = storedUrl;
   const storedKey = localStorage.getItem(LS_GEMINI_KEY);
   if (storedKey) CONFIG._savedKey = storedKey;
+}
+
+
+// ══════════════════════════════════════════════════════
+//  BATCH IMPORT — nhập hàng loạt giao dịch từ ảnh/SMS/file
+// ══════════════════════════════════════════════════════
+let BATCH_MODEL   = 'gemini-2.5-flash';
+let _batchImages  = [];   // Array of {b64, mime}
+let _batchText    = '';
+let _batchRows    = [];   // parsed transactions
+
+const CATS = ['Ăn uống','Di chuyển','Nhà ở','Sức khỏe','Giải trí','Shopping','Tiện ích','Học phí','Du lịch','Lương','Thưởng','Đầu tư','Tiết kiệm','Khác'];
+
+// Open / close
+function openBatchModal() {
+  _batchImages = []; _batchText = ''; _batchRows = [];
+  document.getElementById('batch-img-previews').innerHTML = '';
+  document.getElementById('batch-text-input').value = '';
+  document.getElementById('batch-file-status').textContent = '';
+  document.getElementById('batch-extract-status').textContent = '';
+  document.getElementById('batch-step-input').style.display = 'block';
+  document.getElementById('batch-step-confirm').style.display = 'none';
+  document.getElementById('batch-save-btn').style.display = 'none';
+  switchBatchTab('image');
+  document.getElementById('batch-modal').classList.add('open');
+}
+function closeBatchModal() { document.getElementById('batch-modal').classList.remove('open'); }
+
+// Tab switch
+function switchBatchTab(name) {
+  ['image','text','file'].forEach(t => {
+    document.getElementById('batch-tab-'+t).style.display = t===name ? 'block' : 'none';
+    const btn = document.getElementById('btab-'+t);
+    if (btn) btn.classList.toggle('active', t===name);
+  });
+}
+
+// Model select
+function selectBatchModel(el) {
+  document.querySelectorAll('#batch-model-btns .ai-model-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  BATCH_MODEL = el.dataset.model;
+}
+function selectScanModel(el) {
+  document.querySelectorAll('#scan-model-btns .ai-model-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  SELECTED_MODEL = el.dataset.model; // reuse global for single-scan
+}
+
+// Handle image files
+function handleBatchImageDrop(e) {
+  e.preventDefault();
+  document.getElementById('batch-drop-zone').classList.remove('over');
+  handleBatchImageFiles(e.dataTransfer.files);
+}
+function handleBatchImageFiles(files) {
+  const prev = document.getElementById('batch-img-previews');
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const b64 = ev.target.result.split(',')[1];
+      _batchImages.push({ b64, mime: file.type });
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      img.title = file.name;
+      img.onclick = () => img.remove();
+      prev.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Handle PDF/docx — extract text client-side for gemini
+async function handleBatchDocFile(file) {
+  if (!file) return;
+  const status = document.getElementById('batch-file-status');
+  status.textContent = '⏳ Đang đọc file...';
+  try {
+    if (file.type === 'application/pdf') {
+      // Read as base64 and send to Gemini vision
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const b64 = ev.target.result.split(',')[1];
+        _batchImages = [{ b64, mime: 'application/pdf' }];
+        status.textContent = `✅ Đã tải: ${file.name} — nhấn "Trích xuất" để phân tích`;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // DOCX — read as ArrayBuffer, extract text via mammoth if available
+      status.textContent = `📄 ${file.name} — sẽ gửi tên file tới AI (chức năng DOCX cần mammoth.js)`;
+      _batchText = `[File đính kèm: ${file.name}]`;
+    }
+  } catch(err) {
+    status.textContent = '❌ ' + err.message;
+  }
+}
+
+// ── Main extract ──
+async function runBatchExtract() {
+  const btn = document.getElementById('batch-extract-btn');
+  const status = document.getElementById('batch-extract-status');
+  btn.disabled = true; btn.textContent = '⏳ AI đang phân tích...';
+  status.textContent = '';
+
+  try {
+    const activeTab = ['image','text','file'].find(t =>
+      document.getElementById('btab-'+t)?.classList.contains('active')) || 'image';
+
+    let result;
+    if (activeTab === 'image' && _batchImages.length > 0) {
+      result = await extractFromImages(_batchImages);
+    } else if (activeTab === 'text' || _batchText) {
+      const txt = document.getElementById('batch-text-input').value.trim() || _batchText;
+      if (!txt) { status.textContent = '⚠️ Chưa nhập nội dung'; btn.disabled=false; btn.textContent='🤖 Trích xuất giao dịch →'; return; }
+      result = await extractFromText(txt);
+    } else if (activeTab === 'file' && _batchImages.length > 0) {
+      result = await extractFromImages(_batchImages);
+    } else {
+      status.textContent = '⚠️ Chưa có nội dung để phân tích'; btn.disabled=false; btn.textContent='🤖 Trích xuất giao dịch →'; return;
+    }
+
+    _batchRows = result;
+    renderBatchConfirm(result);
+    status.textContent = `✅ Tìm thấy ${result.length} giao dịch`;
+  } catch(err) {
+    status.innerHTML = `<span style="color:var(--danger)">❌ ${err.message}</span>`;
+  }
+  btn.disabled = false; btn.textContent = '🤖 Trích xuất giao dịch →';
+}
+
+// ── Extract from images (vision API) ──
+async function extractFromImages(images) {
+  const prompt = `Bạn là AI chuyên đọc lịch sử giao dịch ngân hàng Việt Nam từ ảnh.
+Đọc TẤT CẢ giao dịch trong ảnh và trả về JSON array:
+[{"date":"YYYY-MM-DD","amount":150000,"type":"Chi","category":"Ăn uống","description":"Grab Food"}]
+- type: "Chi" hoặc "Thu" hoặc "Đầu tư"
+- category phải là 1 trong: ${CATS.join(', ')}
+- amount là số nguyên dương (không dấu trừ)
+- Nếu không đọc được ngày, dùng ngày hôm nay: ${today()}
+- Trả về JSON array thuần túy, không markdown, không giải thích.`;
+
+  const parts = [{ text: prompt }];
+  images.forEach(img => parts.push({ inline_data: { mime_type: img.mime, data: img.b64 } }));
+
+  const batchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${BATCH_MODEL}:generateContent?key=${(localStorage.getItem('financeos_gemini_key')||CONFIG.GEMINI_API_KEY)}`;
+  const res = await fetch(batchUrl, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ contents:[{ parts }], generationConfig:{ temperature:0.1, maxOutputTokens:4096 } }),
+  });
+  if (!res.ok) { const e=await res.json().catch(()=>{}); throw new Error('Gemini '+res.status+': '+(e?.error?.message||'')); }
+  const d = await res.json();
+  return parseBatchJSON(d);
+}
+
+// ── Extract from SMS/text ──
+async function extractFromText(text) {
+  const prompt = `Bạn là AI phân tích SMS và lịch sử giao dịch ngân hàng Việt Nam.
+Từ nội dung sau, trích xuất TẤT CẢ giao dịch và trả về JSON array:
+[{"date":"YYYY-MM-DD","amount":150000,"type":"Chi","category":"Ăn uống","description":"Mô tả ngắn"}]
+- type: "Chi" hoặc "Thu" hoặc "Đầu tư"  
+- category phải là 1 trong: ${CATS.join(', ')}
+- amount là số nguyên dương
+- Nếu không có ngày, dùng: ${today()}
+- Trả về JSON array thuần, không markdown.
+
+Nội dung:
+${text.slice(0,8000)}`;
+
+  const batchUrl = `https://generativelanguage.googleapis.com/v1beta/models/${BATCH_MODEL}:generateContent?key=${(localStorage.getItem('financeos_gemini_key')||CONFIG.GEMINI_API_KEY)}`;
+  const res = await fetch(batchUrl, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.1, maxOutputTokens:4096} }),
+  });
+  if (!res.ok) { const e=await res.json().catch(()=>{}); throw new Error('Gemini '+res.status+': '+(e?.error?.message||'')); }
+  const d = await res.json();
+  return parseBatchJSON(d);
+}
+
+function parseBatchJSON(d) {
+  if (d.error) throw new Error('Gemini: '+d.error.message);
+  const raw = (d.candidates?.[0]?.content?.parts||[]).filter(p=>p.text).map(p=>p.text).join('').trim();
+  const clean = raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+  const m = clean.match(/\[[\s\S]*\]/);
+  if (!m) throw new Error('AI không trả về JSON. Response: '+raw.slice(0,120));
+  const arr = JSON.parse(m[0]);
+  if (!Array.isArray(arr)) throw new Error('Kết quả không phải array');
+  return arr.map(r => ({
+    selected: true,
+    date: r.date || today(),
+    description: r.description || r.desc || '',
+    category: CATS.includes(r.category) ? r.category : 'Khác',
+    type: ['Chi','Thu','Đầu tư','Chuyển khoản'].includes(r.type) ? r.type : 'Chi',
+    amount: Math.abs(Number(r.amount)||0),
+  }));
+}
+
+// ── Render confirm table ──
+function renderBatchConfirm(rows) {
+  document.getElementById('batch-step-input').style.display = 'none';
+  document.getElementById('batch-step-confirm').style.display = 'block';
+  document.getElementById('batch-save-btn').style.display = 'inline-block';
+  document.getElementById('batch-count-label').textContent = rows.length + ' giao dịch tìm thấy';
+
+  const tbody = document.getElementById('batch-confirm-tbody');
+  tbody.innerHTML = rows.map((r,i) => `
+    <tr class="batch-confirm-row" id="brow-${i}">
+      <td style="text-align:center"><input type="checkbox" ${r.selected?'checked':''} onchange="_batchRows[${i}].selected=this.checked"/></td>
+      <td><input class="batch-edit" type="date" value="${r.date}" onchange="_batchRows[${i}].date=this.value"/></td>
+      <td><input class="batch-edit" type="text"  value="${r.description.replace(/"/g,'&quot;')}" style="min-width:120px" onchange="_batchRows[${i}].description=this.value"/></td>
+      <td><select class="batch-select" onchange="_batchRows[${i}].category=this.value">${CATS.map(c=>`<option ${c===r.category?'selected':''}>${c}</option>`).join('')}</select></td>
+      <td><select class="batch-select" onchange="_batchRows[${i}].type=this.value">
+        ${['Chi','Thu','Đầu tư','Chuyển khoản'].map(t=>`<option ${t===r.type?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td style="text-align:right">
+        <input class="batch-edit" type="number" value="${r.amount}" style="text-align:right;min-width:100px" onchange="_batchRows[${i}].amount=Number(this.value)"/>
+      </td>
+      <td style="text-align:center">
+        <button onclick="document.getElementById('brow-${i}').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px">🗑</button>
+      </td>
+    </tr>`).join('');
+}
+
+function batchSelectAll(v) {
+  _batchRows.forEach(r => r.selected = v);
+  document.querySelectorAll('#batch-confirm-tbody input[type=checkbox]').forEach(cb => cb.checked = v);
+}
+function batchGoBack() {
+  document.getElementById('batch-step-input').style.display = 'block';
+  document.getElementById('batch-step-confirm').style.display = 'none';
+  document.getElementById('batch-save-btn').style.display = 'none';
+}
+
+// ── Save selected ──
+async function saveBatchTransactions() {
+  const btn = document.getElementById('batch-save-btn');
+  const selected = _batchRows.filter(r => r.selected && r.amount > 0);
+  if (!selected.length) { alert('Chưa chọn giao dịch nào để lưu'); return; }
+
+  btn.disabled = true; btn.textContent = `⏳ Đang lưu ${selected.length} giao dịch...`;
+  let saved = 0, errors = 0;
+  for (const r of selected) {
+    try {
+      await apiPost({ action:'addTransaction', data:{
+        id: uuid(), date: r.date, type: r.type,
+        amount: r.amount, category: r.category,
+        description: r.description, payment_method:'Khác',
+      }});
+      saved++;
+    } catch(e) { errors++; }
+  }
+  btn.disabled = false; btn.textContent = '💾 Lưu giao dịch đã chọn';
+  closeBatchModal();
+  const msg = `✅ Đã lưu ${saved} giao dịch` + (errors ? ` (${errors} lỗi)` : '');
+  alert(msg);
+  if (typeof loadTransactions === 'function') loadTransactions();
 }
 
 </script>
