@@ -1038,6 +1038,37 @@ body::before {
               <button class="add-btn" onclick="addAsset('vehicle','illiquid','vehicle')">+ Thêm phương tiện / tài sản khác</button>
             </div>
           </div>
+
+          <!-- 🤝 Cho vay -->
+          <div class="acc-item" id="acc-loan">
+            <div class="acc-head" onclick="toggleAcc(this)">
+              <div class="acc-left"><span class="acc-icon">🤝</span><span class="acc-name">Cho vay / Khoản phải thu</span><span class="acc-cnt" id="cnt-loan">(0)</span></div>
+              <div class="acc-right"><span class="acc-sum" id="sum-loan">0 ₫</span><span class="acc-chev">▼</span></div>
+            </div>
+            <div class="acc-body">
+              <div style="font-size:11px;color:var(--text-muted);padding:4px 0 10px;line-height:1.6">
+                Tiền bạn cho người khác vay — ghi nhận như tài sản (khoản phải thu). Khi thu về, xóa khỏi đây và cộng vào tài khoản ngân hàng.
+              </div>
+              <div class="item-list" id="lst-loan"></div>
+              <button class="add-btn" onclick="addAsset('loan','semi_liquid','loan_receivable')">+ Thêm khoản cho vay</button>
+            </div>
+          </div>
+
+          <!-- 🏭 Vốn kinh doanh -->
+          <div class="acc-item" id="acc-biz">
+            <div class="acc-head" onclick="toggleAcc(this)">
+              <div class="acc-left"><span class="acc-icon">🏭</span><span class="acc-name">Vốn kinh doanh / Cổ phần công ty</span><span class="acc-cnt" id="cnt-biz">(0)</span></div>
+              <div class="acc-right"><span class="acc-sum" id="sum-biz">0 ₫</span><span class="acc-chev">▼</span></div>
+            </div>
+            <div class="acc-body">
+              <div style="font-size:11px;color:var(--text-muted);padding:4px 0 10px;line-height:1.6">
+                Vốn bỏ vào kinh doanh, mở công ty, cổ phần góp vốn, buôn bán. Ghi theo <strong>giá trị vốn hiện tại</strong> (không phải doanh thu). Thu nhập từ kinh doanh thêm vào "Giao dịch → Thu" hàng tháng.
+              </div>
+              <div class="item-list" id="lst-biz"></div>
+              <button class="add-btn" onclick="addAsset('biz','illiquid','business')">+ Thêm vốn kinh doanh / công ty</button>
+            </div>
+          </div>
+
         </div><!-- /accordion -->
 
         <div class="btn-row">
@@ -1847,7 +1878,8 @@ body::before {
                   <select id="asset-type" class="tx-filter" style="width:100%;font-size:14px;padding:10px 13px">
                     <option value="cash">Tiền mặt</option><option value="bank_account">Tài khoản NH</option>
                     <option value="gold">Vàng</option><option value="real_estate">Bất động sản</option>
-                    <option value="vehicle">Phương tiện</option><option value="business">Kinh doanh</option>
+                    <option value="vehicle">Phương tiện</option><option value="business">Vốn kinh doanh</option>
+                    <option value="loan_receivable">Cho vay / Khoản phải thu</option>
                     <option value="other">Khác</option>
                   </select>
                 </div>
@@ -2309,9 +2341,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   const lt = document.querySelector('#init-loader .loader-text');
   if (lt) lt.textContent = 'KẾT NỐI DỮ LIỆU...';
 
+  // Timeout: KHÔNG dùng Demo Mode khi URL thật — hiện lỗi để user biết
   const bootTimeout = setTimeout(() => {
-    console.warn('[FinanceOS] Boot timeout → Demo Mode');
-    bootDemoMode(false);
+    console.warn('[FinanceOS] Boot timeout (10s)');
+    showBootError('Kết nối AppScript mất quá 10 giây. Kiểm tra mạng hoặc re-deploy AppScript.');
   }, 10000);
 
   try {
@@ -2320,10 +2353,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     S.settings = settings;
     const done = String(settings.onboarding_completed) === 'true';
     if (done) {
-      localStorage.setItem('fo_prod_ob', '1'); // cache flag
+      localStorage.setItem('fo_prod_ob', '1');
       hideLoader(); showApp(); loadDashboard();
     } else {
-      // Double-check local cache (AppScript may return stale data briefly)
+      // Kiểm tra cache local (AppScript có thể trả về stale data lần đầu)
       if (localStorage.getItem('fo_prod_ob') === '1') {
         hideLoader(); showApp(); loadDashboard();
       } else {
@@ -2333,9 +2366,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     clearTimeout(bootTimeout);
     console.error('[FinanceOS] Boot error:', err.message);
-    // If cached as onboarded, go to dashboard anyway (network issue)
+    // Nếu đã onboarded trước đó → vào dashboard (KHÔNG demo mode, gọi real API)
     if (localStorage.getItem('fo_prod_ob') === '1') {
-      console.warn('[FinanceOS] Falling back to cached onboarding state');
+      console.warn('[FinanceOS] Cached onboarding — going to dashboard with real API');
       S.settings = S.settings || {};
       hideLoader(); showApp(); loadDashboard();
     } else {
@@ -2569,17 +2602,19 @@ function delAsset(id, group) {
   recalcAssets();
 }
 
-const ASSET_GROUPS = ['liquid','gold','invest','re','vehicle'];
+const ASSET_GROUPS = ['liquid','gold','invest','re','vehicle','loan','biz'];
 function recalcAssets() {
   let total = 0, liq = 0, semi = 0;
   ASSET_GROUPS.forEach(g => {
     const grpAssets = S.assets.filter(a => a.group === g);
     const sum = grpAssets.reduce((s,a) => s+(a.value||0), 0);
-    document.getElementById('cnt-' + g).textContent = `(${grpAssets.length})`;
-    document.getElementById('sum-' + g).textContent = fmt(sum);
+    const cntEl = document.getElementById('cnt-' + g);
+    const sumEl = document.getElementById('sum-' + g);
+    if (cntEl) cntEl.textContent = `(${grpAssets.length})`;
+    if (sumEl) sumEl.textContent = fmt(sum);
     total += sum;
     if (g === 'liquid') liq += sum;
-    if (g === 'invest' || g === 're' || g === 'vehicle' || g === 'gold') semi += sum;
+    if (['invest','re','vehicle','gold','loan','biz'].includes(g)) semi += sum;
   });
   setEl('tb-assets', fmt(total));
   setEl('tb-liquid', fmt(liq));
@@ -2737,7 +2772,10 @@ Tổng nợ: ${td.toLocaleString('vi')} | Nợ xấu: ${bd.toLocaleString('vi')}
 Net Worth: ${nw.toLocaleString('vi')} | Tỷ lệ tiết kiệm: ${sr}%
 Quỹ khẩn cấp: ${lm} tháng (chuẩn 6) | FI Number: ${fiN.toLocaleString('vi')}
 Tiến độ FI: ${fiP}% — ước ${yFI} năm nữa
-Tài sản: ${S.assets.map(a=>`${a.name}:${fmt(a.value)}(${a.asset_class})`).join('; ')||'chưa nhập'}
+Tài sản: ${S.assets.map(a => {
+    const typeLabel = {cash:'tiền mặt',bank_account:'ngân hàng',gold:'vàng',real_estate:'BĐS',vehicle:'xe',business:'vốn KD',loan_receivable:'cho vay',other:'khác'};
+    return `${a.name}:${fmt(a.value)}(${typeLabel[a.asset_type]||a.asset_class})`;
+  }).join('; ')||'chưa nhập'}
 Nợ: ${S.debts.map(d=>`${d.name}:${fmt(d.amount)}@${d.interest_rate}%`).join('; ')||'không có nợ'}
 
 FORMAT JSON:
@@ -2762,7 +2800,8 @@ FORMAT JSON:
 }
 
 // ── Core Gemini fetch — trả về raw text ──
-async function _geminiRaw(prompt, temp, maxTok) {
+async function _geminiRaw(prompt, temp, maxTok, _attempt) {
+  _attempt = _attempt || 1;
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: { temperature: temp ?? 0.5, maxOutputTokens: maxTok ?? 1800 },
@@ -2771,12 +2810,35 @@ async function _geminiRaw(prompt, temp, maxTok) {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
+
   if (!res.ok) {
     let detail = '';
     try { const ej = await res.json(); detail = ej.error?.message || ''; } catch(e) {}
-    if (!detail) try { detail = (await res.text()).slice(0,200); } catch(e){}
+    if (!detail) try { detail = (await res.text()).slice(0, 300); } catch(e) {}
+
+    // 429 Rate limit — tự retry tối đa 3 lần, chờ 5s → 10s → 15s
+    if (res.status === 429 && _attempt <= 3) {
+      const wait = _attempt * 5000;
+      console.warn(`[Gemini] 429 quota hit — retry ${_attempt}/3 sau ${wait/1000}s`);
+      // Thông báo cho user biết đang chờ
+      const scanSub = document.getElementById('scan-sub');
+      if (scanSub) scanSub.textContent = `⏳ Rate limit — thử lại sau ${wait/1000}s (lần ${_attempt}/3)...`;
+      const aiStatus = document.getElementById('ai-status');
+      if (aiStatus) aiStatus.textContent = `⏳ Rate limit — thử lại sau ${wait/1000}s...`;
+      await new Promise(r => setTimeout(r, wait));
+      return _geminiRaw(prompt, temp, maxTok, _attempt + 1);
+    }
+
+    // Lỗi thực sự — throw với message rõ ràng
+    if (res.status === 429) {
+      throw new Error('Gemini 429: Hết quota miễn phí hôm nay. → Thử lại sau vài phút, hoặc lấy API Key mới tại aistudio.google.com/apikey → Free tier: 15req/ph, 1500req/ngày. Chi tiết: ' + detail.slice(0,150));
+    }
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('Gemini ' + res.status + ': API Key không hợp lệ hoặc bị khóa. Kiểm tra lại tại aistudio.google.com');
+    }
     throw new Error('Gemini ' + res.status + ': ' + detail);
   }
+
   const d = await res.json();
   if (d.error) throw new Error('Gemini API: ' + (d.error.message || JSON.stringify(d.error)));
   const candidate = d.candidates?.[0];
@@ -2844,7 +2906,16 @@ function renderDiagnosis(data, errorMsg) {
       <span style="color:#047857">Kết quả được cá nhân hóa dựa trên dữ liệu thực của bạn</span></div>
     </div>`;
   } else {
-    const errDetail = errorMsg ? `<br><code style="font-size:10px;color:#9a3412;word-break:break-all">${errorMsg.slice(0,180)}</code>` : '';
+    const is429 = errorMsg && (errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('Hết quota'));
+    const errDetail = errorMsg
+      ? (is429
+          ? `<div style="margin-top:6px;padding:8px 10px;background:#fef3c7;border:1px solid #f59e0b;font-size:11px;color:#78350f;line-height:1.7">
+              ⚡ <strong>Hết quota miễn phí hôm nay</strong> — Free tier: 15 req/phút, 1,500 req/ngày<br>
+              → Chờ vài phút rồi bấm <strong>🔄 Thử lại</strong><br>
+              → Hoặc lấy API Key mới: <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#6c47ff;font-weight:700">aistudio.google.com/apikey</a>
+            </div>`
+          : `<code style="font-size:10px;color:#9a3412;word-break:break-all;display:block;margin-top:4px">${errorMsg.slice(0,200)}</code>`)
+      : '';
     banner.innerHTML = `<div style="padding:10px 14px;background:#fff7ed;border:1px solid #f97316;margin-bottom:16px;font-size:12px">
       <div style="display:flex;align-items:flex-start;gap:8px">
         <span style="font-size:18px;flex-shrink:0">⚠️</span>
