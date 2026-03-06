@@ -1953,6 +1953,60 @@ body::before {
         <div id="assets-list"><div class="empty-state">Đang tải...</div></div>
       </div>
 
+      <!-- Cho Vay / Receivables Tracking -->
+      <div class="card" style="margin-top:20px" id="loans-section" >
+        <div class="card-title" style="justify-content:space-between">
+          <span>🤝 Danh mục Cho vay</span>
+          <button class="btn-primary" style="font-size:10px;padding:5px 12px" onclick="openLoanModal()">＋ Ghi nhận cho vay</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px">Theo dõi các khoản cho vay bạn bè, người thân, cho vay lấy lãi. Được tính vào Tài sản ròng.</div>
+        <div id="loans-list"><div class="empty-state">Chưa có khoản cho vay nào.</div></div>
+        <div id="loans-summary" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"></div>
+      </div>
+
+      <!-- Loan Modal -->
+      <div class="modal-overlay" id="loan-modal">
+        <div class="modal">
+          <div class="modal-head"><div class="modal-title">Ghi nhận Cho vay</div><button class="modal-close" onclick="closeLoanModal()">✕</button></div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="form-grid form-2col">
+                <div class="field"><label>Người vay</label><input type="text" id="loan-borrower" placeholder="VD: Nguyễn Văn A" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%"/></div>
+                <div class="field"><label>Loại cho vay</label>
+                  <select id="loan-type" class="tx-filter" style="width:100%;font-size:14px;padding:10px 13px">
+                    <option value="loan_receivable">🤝 Bạn bè / Người thân</option>
+                    <option value="loan_interest">💰 Cho vay lấy lãi</option>
+                    <option value="equity">📊 Góp vốn / Cổ phần</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-grid form-2col">
+                <div class="field"><label>Số tiền gốc</label><div class="input-wrap"><input type="number" id="loan-amount" placeholder="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div></div>
+                <div class="field"><label>Đã thu hồi</label><div class="input-wrap"><input type="number" id="loan-recovered" placeholder="0" value="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 52px 10px 13px;outline:none;width:100%"/><span class="input-sfx">₫</span></div></div>
+              </div>
+              <div class="form-grid form-2col">
+                <div class="field"><label>Ngày cho vay</label><input type="date" id="loan-date" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%"/></div>
+                <div class="field"><label>Hạn thu hồi</label><input type="date" id="loan-due" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%"/></div>
+              </div>
+              <div class="form-grid form-2col">
+                <div class="field"><label>Lãi suất %/tháng (nếu có)</label><input type="number" id="loan-rate" placeholder="0" step="0.1" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 13px;outline:none;width:100%"/></div>
+                <div class="field"><label>Tình trạng</label>
+                  <select id="loan-status" class="tx-filter" style="width:100%;font-size:14px;padding:10px 13px">
+                    <option value="pending">⏳ Chưa thu</option>
+                    <option value="partial">🔄 Thu một phần</option>
+                    <option value="recovered">✅ Đã thu đủ</option>
+                    <option value="overdue">🔴 Quá hạn</option>
+                    <option value="bad">❌ Khó đòi</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field"><label>Ghi chú</label><input type="text" id="loan-note" placeholder="Lý do, điều kiện..." style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%"/></div>
+            </div>
+          </div>
+          <div class="modal-foot"><button class="btn-secondary" onclick="closeLoanModal()">Hủy</button><button class="btn-primary" onclick="saveLoan()">💾 Lưu khoản cho vay</button></div>
+        </div>
+      </div>
+
       <!-- Asset Modal -->
       <div class="modal-overlay" id="asset-modal">
         <div class="modal">
@@ -4439,41 +4493,50 @@ async function loadAssets() {
 
 function renderAssets(data) {
   const { totals } = data;
-  const nw = (totals.total||0) - 0; // debts included in net worth calc on backend
   const nwEl = document.getElementById('nw-amount');
   if (nwEl) nwEl.textContent = fmt(totals.total||0);
   setEl('nw-liquid',   fmt(totals.liquid||0));
   setEl('nw-semi',     fmt(totals.semi_liquid||0));
   setEl('nw-illiquid', fmt(totals.illiquid||0));
 
-  const el = document.getElementById('assets-list');
-  if (!data.assets.length) { el.innerHTML = '<div class="empty-state">Chưa có tài sản nào được ghi nhận.</div>'; return; }
+  // Separate loans from regular assets
+  const loanTypes = ['loan_receivable', 'loan_interest', 'equity'];
+  const regularAssets = (data.assets||[]).filter(a => !loanTypes.includes(a.asset_type));
+  const loanAssets = (data.assets||[]).filter(a => loanTypes.includes(a.asset_type));
 
-  const classLabel = { liquid:'💧 Thanh khoản cao', semi_liquid:'🌊 Bán thanh khoản', illiquid:'🪨 Kém thanh khoản' };
-  const classColor = { liquid:'var(--accent)', semi_liquid:'var(--warn)', illiquid:'var(--text-dim)' };
-  el.innerHTML = '';
-  ['liquid','semi_liquid','illiquid'].forEach(cls => {
-    const items = data.grouped[cls] || [];
-    if (!items.length) return;
-    const header = document.createElement('div');
-    header.style.cssText = 'font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 0 6px;margin-top:6px;border-top:1px solid var(--border);';
-    header.style.color = classColor[cls];
-    header.textContent = classLabel[cls];
-    el.appendChild(header);
-    items.forEach(a => {
-      const row = document.createElement('div');
-      row.className = 'inv-row';
-      row.innerHTML = `
-        <div class="inv-dot" style="background:${classColor[cls]}"></div>
-        <div><div class="inv-name">${a.name}</div><div style="font-size:10px;color:var(--text-muted)">${a.asset_type}${a.is_generating_income==='TRUE'?' · Sinh thu nhập':''}</div></div>
-        <div style="text-align:right">
-          <div style="font-family:var(--fh);font-size:13px;font-weight:700">${fmt(a.current_value)}</div>
-          ${a.monthly_income>0?`<div style="font-size:10px;color:var(--accent)">+${fmt(a.monthly_income)}/tháng</div>`:''}
-        </div>
-        <button onclick="deleteAsset('${a.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;opacity:.4;padding:3px 5px;transition:opacity .2s" onmouseover="this.style.opacity=1;this.style.color='var(--danger)'" onmouseout="this.style.opacity=.4;this.style.color='var(--text-muted)'">✕</button>`;
-      el.appendChild(row);
+  // Render regular assets
+  const el = document.getElementById('assets-list');
+  if (!regularAssets.length) { el.innerHTML = '<div class="empty-state">Chưa có tài sản nào (ngoài khoản cho vay).</div>'; }
+  else {
+    const classLabel = { liquid:'💧 Thanh khoản cao', semi_liquid:'🌊 Bán thanh khoản', illiquid:'🪨 Kém thanh khoản' };
+    const classColor = { liquid:'var(--accent)', semi_liquid:'var(--warn)', illiquid:'var(--text-dim)' };
+    el.innerHTML = '';
+    ['liquid','semi_liquid','illiquid'].forEach(cls => {
+      const items = regularAssets.filter(a => a.asset_class === cls);
+      if (!items.length) return;
+      const header = document.createElement('div');
+      header.style.cssText = 'font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 0 6px;margin-top:6px;border-top:1px solid var(--border);';
+      header.style.color = classColor[cls];
+      header.textContent = classLabel[cls];
+      el.appendChild(header);
+      items.forEach(a => {
+        const row = document.createElement('div');
+        row.className = 'inv-row';
+        row.innerHTML = `
+          <div class="inv-dot" style="background:${classColor[cls]}"></div>
+          <div><div class="inv-name">${a.name}</div><div style="font-size:10px;color:var(--text-muted)">${a.asset_type}${a.is_generating_income==='TRUE'?' · Sinh thu nhập':''}</div></div>
+          <div style="text-align:right">
+            <div style="font-family:var(--fh);font-size:13px;font-weight:700">${fmt(a.current_value)}</div>
+            ${a.monthly_income>0?`<div style="font-size:10px;color:var(--accent)">+${fmt(a.monthly_income)}/tháng</div>`:''}
+          </div>
+          <button onclick="deleteAsset('${a.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;opacity:.4;padding:3px 5px;transition:opacity .2s" onmouseover="this.style.opacity=1;this.style.color='var(--danger)'" onmouseout="this.style.opacity=.4;this.style.color='var(--text-muted)'">✕</button>`;
+        el.appendChild(row);
+      });
     });
-  });
+  }
+
+  // Render loan section
+  renderLoans(data.assets);
 }
 
 function openAssetModal()  {
@@ -4514,6 +4577,140 @@ async function deleteAsset(id) {
   if (!confirm('Xóa tài sản này?')) return;
   try { await apiPost({ action:'deleteAsset', id }); loadAssets(); }
   catch(err) { alert('Lỗi: '+err.message); }
+}
+
+// ── Cho Vay / Loan Tracking ──
+function openLoanModal() {
+  document.getElementById('loan-modal').classList.add('open');
+  document.getElementById('loan-borrower').value = '';
+  document.getElementById('loan-amount').value = '';
+  document.getElementById('loan-recovered').value = '0';
+  document.getElementById('loan-date').value = today();
+  document.getElementById('loan-due').value = '';
+  document.getElementById('loan-rate').value = '';
+  document.getElementById('loan-status').value = 'pending';
+  document.getElementById('loan-note').value = '';
+  document.getElementById('loan-type').value = 'loan_receivable';
+}
+function closeLoanModal() { document.getElementById('loan-modal').classList.remove('open'); }
+
+async function saveLoan() {
+  const borrower = document.getElementById('loan-borrower').value.trim();
+  const amount   = parseFloat(document.getElementById('loan-amount').value) || 0;
+  const recovered= parseFloat(document.getElementById('loan-recovered').value) || 0;
+  if (!borrower) { alert('Nhập tên người vay'); return; }
+  if (!amount)   { alert('Nhập số tiền cho vay'); return; }
+
+  const loanMeta = {
+    borrower,
+    original_amount: amount,
+    recovered_amount: recovered,
+    loan_date:  document.getElementById('loan-date').value || today(),
+    due_date:   document.getElementById('loan-due').value || '',
+    interest_rate: parseFloat(document.getElementById('loan-rate').value) || 0,
+    status:     document.getElementById('loan-status').value || 'pending',
+    note:       document.getElementById('loan-note').value.trim(),
+  };
+
+  const assetType = document.getElementById('loan-type').value;
+  const remaining = Math.max(0, amount - recovered);
+  const monthlyIncome = loanMeta.interest_rate > 0 ? Math.round(remaining * loanMeta.interest_rate / 100) : 0;
+
+  const data = {
+    id: uuid(),
+    name: `Cho vay: ${borrower}`,
+    asset_class: 'semi_liquid',
+    asset_type: assetType,
+    current_value: remaining,
+    is_generating_income: monthlyIncome > 0 ? 'TRUE' : 'FALSE',
+    monthly_income: monthlyIncome,
+    acquisition_date: loanMeta.loan_date,
+    notes: JSON.stringify(loanMeta),
+  };
+
+  try {
+    await apiPost({ action: 'addAsset', data });
+    closeLoanModal();
+    loadAssets();
+  } catch (err) { alert('Lỗi: ' + err.message); }
+}
+
+function renderLoans(assets) {
+  const loanTypes = ['loan_receivable', 'loan_interest', 'equity'];
+  const loans = (assets || []).filter(a => loanTypes.includes(a.asset_type));
+  const el = document.getElementById('loans-list');
+  const sumEl = document.getElementById('loans-summary');
+  const section = document.getElementById('loans-section');
+
+  if (!loans.length) {
+    el.innerHTML = '<div class="empty-state">Chưa có khoản cho vay nào. Bấm "＋ Ghi nhận cho vay" để bắt đầu.</div>';
+    if (sumEl) sumEl.style.display = 'none';
+    return;
+  }
+
+  const statusLabel = {
+    pending:'⏳ Chưa thu', partial:'🔄 Thu một phần',
+    recovered:'✅ Đã thu đủ', overdue:'🔴 Quá hạn', bad:'❌ Khó đòi'
+  };
+  const statusColor = {
+    pending:'var(--warn)', partial:'var(--blue)',
+    recovered:'var(--accent)', overdue:'var(--danger)', bad:'var(--danger)'
+  };
+  const typeIcon = { loan_receivable:'🤝', loan_interest:'💰', equity:'📊' };
+  const typeLabel = { loan_receivable:'Bạn bè/NT', loan_interest:'Cho vay lãi', equity:'Góp vốn/CP' };
+
+  let totalLent = 0, totalRecovered = 0, totalOutstanding = 0;
+  el.innerHTML = '';
+
+  loans.forEach(a => {
+    let meta = {};
+    try { meta = JSON.parse(a.notes || '{}'); } catch(e) {}
+    const original  = Number(meta.original_amount) || Number(a.current_value) || 0;
+    const recovered = Number(meta.recovered_amount) || 0;
+    const remaining = Math.max(0, original - recovered);
+    const pct = original > 0 ? Math.min(100, (recovered / original * 100)) : 0;
+    const status = meta.status || 'pending';
+    const dueDate = meta.due_date || '';
+    const isOverdue = dueDate && new Date(dueDate) < new Date() && status !== 'recovered';
+
+    totalLent += original;
+    totalRecovered += recovered;
+    totalOutstanding += remaining;
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)';
+    row.innerHTML = `
+      <div style="font-size:20px;flex-shrink:0">${typeIcon[a.asset_type]||'💰'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--text)">${meta.borrower || a.name || '—'}</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">${typeLabel[a.asset_type]||'Cho vay'}${dueDate ? ' · Hạn: '+fmtDate(dueDate) : ''}${meta.interest_rate>0 ? ' · '+meta.interest_rate+'%/tháng' : ''}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+          <div style="flex:1;background:var(--surface2);height:6px;border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${statusColor[isOverdue?'overdue':status]||'var(--accent)'};border-radius:3px;transition:width .5s"></div>
+          </div>
+          <span style="font-size:10px;font-weight:700;color:${statusColor[isOverdue?'overdue':status]||'var(--text-dim)'}">${pct.toFixed(0)}%</span>
+        </div>
+        ${meta.note ? `<div style="font-size:10px;color:var(--text-muted);margin-top:3px;font-style:italic">"${meta.note}"</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:var(--fh);font-size:13px;font-weight:700;color:var(--text)">${fmt(original)}</div>
+        <div style="font-size:10px;color:${statusColor[isOverdue?'overdue':status]}">${statusLabel[isOverdue?'overdue':status]||status}</div>
+        <div style="font-size:10px;color:var(--accent);margin-top:2px">Thu: ${fmt(recovered)} / Còn: ${fmt(remaining)}</div>
+      </div>
+      <button onclick="deleteAsset('${a.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;opacity:.4;padding:3px 5px" onmouseover="this.style.opacity=1;this.style.color='var(--danger)'" onmouseout="this.style.opacity=.4;this.style.color='var(--text-muted)'">✕</button>`;
+    el.appendChild(row);
+  });
+
+  // Summary
+  if (sumEl) {
+    sumEl.style.display = 'block';
+    sumEl.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
+        <div><div style="font-size:10px;color:var(--text-muted)">Tổng cho vay</div><div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--text)">${fmt(totalLent)}</div></div>
+        <div><div style="font-size:10px;color:var(--text-muted)">Đã thu hồi</div><div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--accent)">${fmt(totalRecovered)}</div></div>
+        <div><div style="font-size:10px;color:var(--text-muted)">Còn phải thu</div><div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--warn)">${fmt(totalOutstanding)}</div></div>
+      </div>`;
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -4625,23 +4822,42 @@ async function deleteAllInsights() {
   if (typed?.trim().toUpperCase() !== 'XOA-AI') { alert('Hủy — chưa xác nhận.'); return; }
 
   const el = document.getElementById('ai-history-list');
-  const cards = el?.querySelectorAll('.ai-insight-card') || [];
-  let deleted = 0, failed = 0;
-  el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted)"><div class="loader-ring" style="margin:0 auto 8px"></div>Đang xóa ' + cards.length + ' phân tích...</div>';
 
-  for (const card of cards) {
-    const id = card.id?.replace('insight-','');
-    if (!id) continue;
+  // Lấy danh sách insight IDs từ API (đáng tin hơn DOM)
+  let insights = [];
+  try { insights = await apiGet('getAiInsights'); } catch(e) {}
+  if (!insights || !insights.length) {
+    alert('Không tìm thấy phân tích nào để xóa.');
+    return;
+  }
+
+  const total = insights.length;
+  let deleted = 0, failed = 0;
+  el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted)"><div class="loader-ring" style="margin:0 auto 8px"></div><div id="del-ai-progress">Đang xóa 0/${total}...</div></div>`;
+
+  for (const insight of insights) {
+    const id = insight.id;
+    if (!id) { failed++; continue; }
     try {
-      const res = await apiPost({ action:'deleteInsight', data:{ id } });
-      if (res.error) failed++; else deleted++;
-    } catch(e) { failed++; }
+      const res = await apiPost({ action:'deleteInsight', data:{ id: String(id) } });
+      if (res && !res.error) { deleted++; } else {
+        console.warn('deleteInsight server error:', res?.error, 'id:', id);
+        failed++;
+      }
+    } catch(e) {
+      console.warn('deleteInsight exception:', e.message, 'id:', id);
+      failed++;
+    }
+    const prog = document.getElementById('del-ai-progress');
+    if (prog) prog.textContent = `Đang xóa ${deleted+failed}/${total}...`;
   }
 
   el.innerHTML = '<div class="empty-state">Chưa có phân tích nào. Bấm "Phân tích →" để bắt đầu!</div>';
   const actionsEl = document.getElementById('ai-history-actions');
   if (actionsEl) actionsEl.style.display = 'none';
-  alert(`✅ Đã xóa ${deleted} phân tích` + (failed ? ` (${failed} lỗi)` : ''));
+  alert(failed === 0
+    ? `✅ Đã xóa tất cả ${deleted} phân tích!`
+    : `Đã xóa ${deleted}/${total} phân tích (${failed} lỗi — kiểm tra Console để debug)`);
 }
 
 // 7.1 Monthly Analysis
