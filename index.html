@@ -1324,6 +1324,18 @@ body::before {
         <div style="font-size:13px">Đang tải dữ liệu...</div>
       </div>
       <div id="dash-content" style="display:none">
+        <!-- Month Selector -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="font-family:var(--fh);font-size:18px;font-weight:800;color:var(--text)">📊 Tổng quan</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onclick="dashChangeMonth(-1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;padding:6px 10px;font-size:14px;line-height:1" title="Tháng trước">◀</button>
+            <input type="month" id="dash-month-picker" onchange="loadDashboard(this.value)"
+              style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:13px;font-weight:700;padding:7px 12px;outline:none;cursor:pointer;min-width:150px;text-align:center"/>
+            <button onclick="dashChangeMonth(1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;padding:6px 10px;font-size:14px;line-height:1" title="Tháng sau">▶</button>
+            <button onclick="loadDashboard()" style="background:var(--accent);color:#000;border:none;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fh)" title="Tháng hiện tại">Hôm nay</button>
+          </div>
+        </div>
+
         <!-- KPI Cards -->
         <div class="kpi-grid" id="kpi-grid">
           <div class="kpi-card green">
@@ -1641,6 +1653,14 @@ body::before {
          MODULE 3: NGÂN SÁCH
     ══════════════════════════════════════ -->
     <div class="page" id="page-budget">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="month" id="budget-month-picker" onchange="loadBudget(this.value)"
+            style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:13px;font-weight:700;padding:7px 12px;outline:none;cursor:pointer"/>
+        </div>
+        <button class="btn-primary" style="font-size:12px;padding:9px 20px" onclick="openBudgetModal()">＋ Thêm ngân sách</button>
+      </div>
+
       <div id="budget-suggest-banner" style="display:none" class="suggest-banner">
         💡 <div id="budget-suggest-text"></div>
       </div>
@@ -1673,6 +1693,61 @@ body::before {
 
       <!-- Alert banners -->
       <div id="budget-alerts-wrap"></div>
+
+      <!-- Budget Modal -->
+      <div class="modal-overlay" id="budget-modal">
+        <div class="modal">
+          <div class="modal-head">
+            <div class="modal-title" id="budget-modal-title">Thêm Ngân sách</div>
+            <button class="modal-close" onclick="closeBudgetModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="field">
+                <label>Danh mục</label>
+                <select id="budget-cat-select" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%">
+                  <option value="">— Chọn danh mục —</option>
+                  <option value="Ăn uống">🍜 Ăn uống</option>
+                  <option value="Di chuyển">🚗 Di chuyển</option>
+                  <option value="Nhà ở">🏠 Nhà ở</option>
+                  <option value="Điện nước">💡 Điện nước</option>
+                  <option value="Internet">📡 Internet</option>
+                  <option value="Sức khỏe">🏥 Sức khỏe</option>
+                  <option value="Giải trí">🎬 Giải trí</option>
+                  <option value="Shopping">🛍 Shopping</option>
+                  <option value="Du lịch">✈ Du lịch</option>
+                  <option value="Học phí">📚 Học phí</option>
+                  <option value="Bảo hiểm">🛡 Bảo hiểm</option>
+                  <option value="Ăn ngoài">🍽 Ăn ngoài</option>
+                  <option value="Khác">📦 Khác</option>
+                </select>
+              </div>
+              <div class="form-grid form-2col">
+                <div class="field">
+                  <label>Ngân sách (VND)</label>
+                  <input type="number" id="budget-amount-input" placeholder="VD: 5000000"
+                    style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 13px;outline:none;width:100%"/>
+                </div>
+                <div class="field">
+                  <label>Cảnh báo khi đạt (%)</label>
+                  <input type="number" id="budget-alert-input" placeholder="80" value="80" min="50" max="100"
+                    style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fh);font-size:14px;padding:10px 13px;outline:none;width:100%"/>
+                </div>
+              </div>
+              <div class="field">
+                <label>Tháng áp dụng</label>
+                <input type="month" id="budget-month-input"
+                  style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--fb);font-size:14px;padding:10px 13px;outline:none;width:100%"/>
+              </div>
+            </div>
+            <div id="budget-save-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn-secondary" onclick="closeBudgetModal()">Hủy</button>
+            <button class="btn-primary" onclick="saveBudgetEntry()" id="budget-save-btn">💾 Lưu</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ══════════════════════════════════════
@@ -2058,6 +2133,7 @@ body::before {
         <!-- Trạng thái hiện tại -->
         <div class="card" style="margin-bottom:20px">
           <div class="card-title">📡 Trạng thái kết nối</div>
+          <div id="mode-indicator" style="margin-bottom:10px;padding:8px 12px;font-size:12px;font-weight:600;border:1px solid var(--border);display:flex;align-items:center;gap:8px"></div>
           <div id="cfg-status-panel" style="display:grid;gap:10px;margin-top:4px"></div>
         </div>
 
@@ -2151,6 +2227,7 @@ body::before {
 //  Cung cấp dữ liệu mẫu Việt Nam thực tế để test toàn bộ app
 // ══════════════════════════════════════════════════════
 let DEMO_MODE = false;
+let _currentDashMonth = new Date().toISOString().slice(0,7);
 
 const DEMO_DATA = {
   settings: {
@@ -2370,55 +2447,80 @@ let debtIdx  = 0;
 //  BOOT — check onboarding status
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
-  // Áp dụng config đã lưu từ localStorage trước khi kiểm tra kết nối
-  applyStoredConfig();
-
-  const isIframe    = window.self !== window.top;
-  const hasNoScript = !CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.includes('YOUR_');
-
-  // Iframe (Claude preview, embed) → Demo ngay, không thể fetch ra ngoài
-  if (isIframe || hasNoScript) {
-    await bootDemoMode(isIframe);
-    return;
-  }
-
-  // file:// hoặc http/https → thử kết nối AppScript thật
-  const lt = document.querySelector('#init-loader .loader-text');
-  if (lt) lt.textContent = 'KẾT NỐI DỮ LIỆU...';
-
-  // Timeout: KHÔNG dùng Demo Mode khi URL thật — hiện lỗi để user biết
-  const bootTimeout = setTimeout(() => {
-    console.warn('[FinanceOS] Boot timeout (10s)');
-    showBootError('Kết nối AppScript mất quá 10 giây. Kiểm tra mạng hoặc re-deploy AppScript.');
-  }, 10000);
+  // ── Lưới an toàn: nếu có exception bất kỳ → vẫn không bị stuck ──
+  const _safeEscape = (msg) => {
+    try { showBootError(msg); } catch(e2) {
+      // Nếu showBootError cũng lỗi — force hiện thông báo thô
+      const el = document.getElementById('init-loader');
+      if (el) el.innerHTML = '<div style="padding:32px;color:red;font-size:13px;text-align:center">'
+        + '<strong>Lỗi khởi động:</strong><br>' + String(msg).slice(0,300)
+        + '<br><br><button onclick="location.reload()" style="padding:8px 20px;cursor:pointer">↻ Tải lại</button>'
+        + '<br><br><button onclick="localStorage.clear();location.reload()" style="padding:8px 20px;cursor:pointer;margin-top:8px">🗑 Xóa cache & tải lại</button></div>';
+    }
+  };
 
   try {
-    const settings = await apiGet('getSettings');
-    clearTimeout(bootTimeout);
-    S.settings = settings;
-    const done = String(settings.onboarding_completed) === 'true';
-    if (done) {
-      localStorage.setItem('fo_prod_ob', '1');
-      hideLoader(); showApp(); loadDashboard();
-    } else {
-      // Kiểm tra cache local (AppScript có thể trả về stale data lần đầu)
-      if (localStorage.getItem('fo_prod_ob') === '1') {
+    // Áp dụng config đã lưu từ localStorage trước khi kiểm tra kết nối
+    applyStoredConfig();
+
+    const isIframe    = window.self !== window.top;
+    const hasNoScript = !CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.includes('YOUR_');
+    const forceProd   = localStorage.getItem('fo_force_prod') === '1';
+
+    // Cập nhật UI
+    const lt = document.querySelector('#init-loader .loader-text');
+
+    if (hasNoScript || (isIframe && !forceProd)) {
+      await bootDemoMode(isIframe && !hasNoScript);
+      return;
+    }
+
+    if (lt) lt.textContent = 'KẾT NỐI DỮ LIỆU...';
+
+    // Timeout 15s — đủ cho AppScript cold start
+    let bootDone = false;
+    const bootTimeout = setTimeout(() => {
+      if (!bootDone) {
+        console.warn('[FinanceOS] Boot timeout 15s');
+        // Nếu đã onboarded → vào thẳng dashboard
+        if (localStorage.getItem('fo_prod_ob') === '1') {
+          bootDone = true;
+          S.settings = S.settings || {};
+          hideLoader(); showApp(); loadDashboard();
+        } else {
+          _safeEscape('Kết nối AppScript quá 15 giây. Kiểm tra mạng hoặc re-deploy AppScript.');
+        }
+      }
+    }, 15000);
+
+    try {
+      const settings = await apiGet('getSettings');
+      bootDone = true;
+      clearTimeout(bootTimeout);
+      S.settings = settings;
+      const done = String(settings.onboarding_completed) === 'true';
+      if (done || localStorage.getItem('fo_prod_ob') === '1') {
+        if (done) localStorage.setItem('fo_prod_ob', '1');
         hideLoader(); showApp(); loadDashboard();
       } else {
         hideLoader(); showOnboarding();
       }
+    } catch (err) {
+      bootDone = true;
+      clearTimeout(bootTimeout);
+      console.error('[FinanceOS] Boot error:', err.message);
+      if (localStorage.getItem('fo_prod_ob') === '1') {
+        // Đã onboarded → vào dashboard, dùng real API (có thể có data cache)
+        S.settings = S.settings || {};
+        hideLoader(); showApp(); loadDashboard();
+      } else {
+        _safeEscape(err.message);
+      }
     }
-  } catch (err) {
-    clearTimeout(bootTimeout);
-    console.error('[FinanceOS] Boot error:', err.message);
-    // Nếu đã onboarded trước đó → vào dashboard (KHÔNG demo mode, gọi real API)
-    if (localStorage.getItem('fo_prod_ob') === '1') {
-      console.warn('[FinanceOS] Cached onboarding — going to dashboard with real API');
-      S.settings = S.settings || {};
-      hideLoader(); showApp(); loadDashboard();
-    } else {
-      showBootError(err.message);
-    }
+  } catch(outerErr) {
+    // Exception ngay từ đầu boot (applyStoredConfig, v.v.)
+    console.error('[FinanceOS] Fatal boot error:', outerErr);
+    _safeEscape('Lỗi khởi động nghiêm trọng: ' + outerErr.message);
   }
 });
 
@@ -2479,17 +2581,44 @@ function hideLoader()     { document.getElementById('init-loader').style.display
 function showOnboarding() { document.getElementById('onboarding-overlay').classList.add('visible'); }
 function showApp()        { document.getElementById('app-shell').classList.add('visible'); }
 
+
+// ══════════════════════════════════════════════════════
+//  FORCE PRODUCTION MODE — kết nối AppScript thật dù đang trong iframe
+// ══════════════════════════════════════════════════════
+function forceProdMode() {
+  localStorage.setItem('fo_force_prod', '1');
+  // Show connecting UI
+  const banner = document.getElementById('demo-banner');
+  if (banner) banner.innerHTML = '<span style="font-size:12px;color:var(--accent)">⏳ Đang kết nối dữ liệu thật... trang sẽ tải lại</span>';
+  setTimeout(() => location.reload(), 800);
+}
+
+function disableForceProd() {
+  localStorage.removeItem('fo_force_prod');
+  localStorage.removeItem('fo_prod_ob');
+  location.reload();
+}
+
 function showDemoBanner(fromIframe) {
   if (document.getElementById('demo-banner')) return;
-  const msg = fromIframe
-    ? 'Đang xem trong iframe · <strong>Tải file về máy → mở bằng Chrome/Edge</strong> để kết nối AppScript thật'
-    : 'Dữ liệu mẫu · Mở file trong trình duyệt và cấu hình APPS_SCRIPT_URL để dùng thật';
   const banner = document.createElement('div');
   banner.id = 'demo-banner';
-  banner.innerHTML = `
+  if (fromIframe) {
+    // Trong iframe (Claude preview) — cho phép force production mode
+    banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
+      <span style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;background:var(--warn);color:#fff;padding:2px 7px">DEMO</span>
+      <span style="font-size:11px;font-weight:500;color:var(--warn);flex:1">Đang xem trong Claude preview · dữ liệu là mẫu, không phải của bạn</span>
+      <button onclick="forceProdMode()" style="flex-shrink:0;background:var(--accent);color:#fff;border:none;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fh)">
+        🔗 Kết nối dữ liệu thật
+      </button>
+    </div>`;
+  } else {
+    banner.innerHTML = `
     <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0">DEMO</span>
-    <span style="font-size:11px;color:var(--text-dim);margin-left:10px;flex:1">${msg}</span>
+    <span style="font-size:11px;color:var(--text-dim);margin-left:10px;flex:1">Dữ liệu mẫu · Mở file trong trình duyệt và cấu hình APPS_SCRIPT_URL để dùng thật</span>
     <button onclick="document.getElementById('demo-banner').remove();document.getElementById('app-shell').style.marginTop='0'" style="margin-left:10px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;line-height:1;padding:0;flex-shrink:0">×</button>`;
+  }
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9000;background:var(--warn-dim);border-bottom:1px solid var(--warn);padding:6px 16px;display:flex;align-items:center;gap:4px;color:var(--warn);';
   document.body.appendChild(banner);
   const appShell = document.getElementById('app-shell');
@@ -2922,53 +3051,30 @@ function buildPrompt() {
   const lm   = expense>0 ? (liq/expense).toFixed(1) : 0;
   const fiN  = expense*12*25;
   const fiP  = fiN>0 ? (nw/fiN*100).toFixed(1) : 0;
-  const yFI  = (fiN-nw)>0&&fcf>0 ? Math.ceil((fiN-nw)/(fcf*12)) : '?';
+  const yFI  = (fiN-nw)>0&&fcf>0 ? Math.ceil((fiN-nw)/(fcf*12)) : '>=0';
+  const tl   = {cash:'tiền mặt',bank_account:'ngân hàng',gold:'vàng',real_estate:'BĐS',vehicle:'xe',business:'vốn KD',loan_receivable:'cho vay',other:'khác'};
+  const assetsStr = S.assets.map(a=>`${a.name}:${fmt(a.value)}(${tl[a.asset_type]||a.asset_class})`).join('; ')||'chưa nhập';
+  const debtsStr  = S.debts.map(d=>`${d.name}:${fmt(d.amount)}@${d.interest_rate||0}%`).join('; ')||'không có';
 
-  return `Bạn là chuyên gia tài chính cá nhân Việt Nam 20 năm kinh nghiệm.
-YÊU CẦU QUAN TRỌNG: Chỉ trả về JSON object, KHÔNG có markdown fence, KHÔNG có text trước hoặc sau JSON. Bắt đầu ngay bằng { và kết thúc bằng }.
+  // JSON schema nhỏ gọn — giới hạn ký tự để tránh Gemini viết quá dài bị cắt
+  return `Chuyên gia tài chính VN. Phân tích và trả về JSON (KHÔNG markdown, KHÔNG text ngoài JSON).
 
-DATA:
-Tên: ${name} | Tuổi: ${age}
-Thu/tháng: ${income.toLocaleString('vi')} VND | Chi/tháng: ${expense.toLocaleString('vi')} VND
-Dòng tiền tự do: ${fcf.toLocaleString('vi')} VND/tháng
-Tổng tài sản: ${ta.toLocaleString('vi')} | Thanh khoản: ${liq.toLocaleString('vi')}
-Tổng nợ: ${td.toLocaleString('vi')} | Nợ xấu: ${bd.toLocaleString('vi')}
-Net Worth: ${nw.toLocaleString('vi')} | Tỷ lệ tiết kiệm: ${sr}%
-Quỹ khẩn cấp: ${lm} tháng (chuẩn 6) | FI Number: ${fiN.toLocaleString('vi')}
-Tiến độ FI: ${fiP}% — ước ${yFI} năm nữa
-Tài sản: ${S.assets.map(a => {
-    const typeLabel = {cash:'tiền mặt',bank_account:'ngân hàng',gold:'vàng',real_estate:'BĐS',vehicle:'xe',business:'vốn KD',loan_receivable:'cho vay',other:'khác'};
-    return `${a.name}:${fmt(a.value)}(${typeLabel[a.asset_type]||a.asset_class})`;
-  }).join('; ')||'chưa nhập'}
-Nợ: ${S.debts.map(d=>`${d.name}:${fmt(d.amount)}@${d.interest_rate}%`).join('; ')||'không có nợ'}
+DỮ LIỆU: ${name}, ${age}t, Thu ${income.toLocaleString('vi')}đ, Chi ${expense.toLocaleString('vi')}đ/th, FCF ${fcf.toLocaleString('vi')}đ, TàiSản ${ta.toLocaleString('vi')}đ, Nợ ${td.toLocaleString('vi')}đ, NW ${nw.toLocaleString('vi')}đ, TK ${sr}%, QuỹKC ${lm}th, FI${fiP}% (~${yFI}năm)
+Tài sản: ${assetsStr}
+Nợ: ${debtsStr}
 
-FORMAT JSON:
-{
-  "score": <0-100>,
-  "verdict": "<Xuất sắc|Tốt|Khá|Cần cải thiện|Nguy hiểm>",
-  "metrics": [
-    {"name":"Tỷ lệ tiết kiệm","value":"${sr}%","note":"<nhận xét ngắn, chuẩn 20-30%>","pct":<0-100>,"color":"<#10b981|#f59e0b|#ef4444>"},
-    {"name":"Quỹ khẩn cấp","value":"${lm} tháng","note":"<nhận xét, chuẩn 6 tháng>","pct":<0-100>,"color":"<màu>"},
-    {"name":"Nợ xấu","value":"<Không có|Có: số tiền>","note":"<nhận xét>","pct":<0-100>,"color":"<màu>"},
-    {"name":"Đầu tư","value":"<mô tả>","note":"<nhận xét>","pct":<0-100>,"color":"<màu>"},
-    {"name":"Tiến độ FI","value":"${fiP}%","note":"<nhận xét, ước ${yFI} năm>","pct":<0-100>,"color":"<màu>"}
-  ],
-  "problems": ["<vấn đề 1 có số tiền cụ thể>","<vấn đề 2 nếu có>","<vấn đề 3 nếu có>"],
-  "roadmap": [
-    {"when":"Ngay bây giờ (tháng 1–3)","icon":"🔥","action":"<hành động cụ thể, có số tiền>"},
-    {"when":"Ngắn hạn (tháng 3–6)","icon":"📈","action":"<hành động tiếp theo>"},
-    {"when":"Dài hạn (tháng 6–12)","icon":"🏆","action":"<xây nền đầu tư>"}
-  ],
-  "personal_comment":"<2-3 câu thẳng thắn cá nhân hóa cho ${name}, như người bạn tốt>"
-}`;
+JSON (giữ mỗi string ngắn, tối đa 80 ký tự mỗi field):
+{"score":N,"verdict":"V","metrics":[{"name":"Tỷ lệ tiết kiệm","value":"${sr}%","note":"ngắn gọn","pct":N,"color":"#hex"},{"name":"Quỹ khẩn cấp","value":"${lm}th","note":"ngắn gọn","pct":N,"color":"#hex"},{"name":"Nợ xấu","value":"V","note":"ngắn gọn","pct":N,"color":"#hex"},{"name":"Đầu tư","value":"V","note":"ngắn gọn","pct":N,"color":"#hex"},{"name":"Tiến độ FI","value":"${fiP}%","note":"ngắn gọn","pct":N,"color":"#hex"}],"problems":["vấn đề 1","vấn đề 2"],"roadmap":[{"when":"Tháng 1-3","icon":"🔥","action":"hành động"},{"when":"Tháng 3-6","icon":"📈","action":"hành động"},{"when":"Tháng 6-12","icon":"🏆","action":"hành động"}],"personal_comment":"1-2 câu ngắn cho ${name}"}`;
 }
 
 // ── Core Gemini fetch — trả về raw text ──
-async function _geminiRaw(prompt, temp, maxTok, _attempt) {
+async function _geminiRaw(prompt, temp, maxTok, _attempt, jsonMode) {
   _attempt = _attempt || 1;
+  const genCfg = { temperature: temp ?? 0.5, maxOutputTokens: maxTok ?? 2048 };
+  if (jsonMode) genCfg.responseMimeType = 'application/json';
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: temp ?? 0.5, maxOutputTokens: maxTok ?? 1800 },
+    generationConfig: genCfg,
   };
   const res = await fetch(GEMINI_URL(), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2983,14 +3089,14 @@ async function _geminiRaw(prompt, temp, maxTok, _attempt) {
     // 429 Rate limit — tự retry tối đa 3 lần, chờ 5s → 10s → 15s
     if (res.status === 429 && _attempt <= 3) {
       const wait = _attempt * 5000;
-      console.warn(`[Gemini] 429 quota hit — retry ${_attempt}/3 sau ${wait/1000}s`);
+      console.warn('[Gemini] 429 quota hit — retry ' + _attempt + '/3 sau ' + (wait/1000) + 's');
       // Thông báo cho user biết đang chờ
       const scanSub = document.getElementById('scan-sub');
-      if (scanSub) scanSub.textContent = `⏳ Rate limit — thử lại sau ${wait/1000}s (lần ${_attempt}/3)...`;
+      if (scanSub) scanSub.textContent = '⏳ Rate limit — thử lại sau ' + (wait/1000) + 's (lần ' + _attempt + '/3)...';
       const aiStatus = document.getElementById('ai-status');
-      if (aiStatus) aiStatus.textContent = `⏳ Rate limit — thử lại sau ${wait/1000}s...`;
+      if (aiStatus) aiStatus.textContent = '⏳ Rate limit — thử lại sau ' + (wait/1000) + 's...';
       await new Promise(r => setTimeout(r, wait));
-      return _geminiRaw(prompt, temp, maxTok, _attempt + 1);
+      return _geminiRaw(prompt, temp, maxTok, _attempt + 1, jsonMode);
     }
 
     // Lỗi thực sự — throw với message rõ ràng
@@ -3018,28 +3124,56 @@ async function _geminiRaw(prompt, temp, maxTok, _attempt) {
 
 // Dùng khi cần JSON output (X-quang chẩn đoán, phân tích thói quen)
 async function callGemini(prompt) {
-  const raw = await _geminiRaw(prompt, 0.2, 2500);
-  console.log('[Gemini raw]', raw.slice(0, 200)); // debug — luôn hiện trong DevTools
+  // 8192 tokens + JSON mode: Gemini trả JSON sạch, không bị cắt
+  const raw = await _geminiRaw(prompt, 0.2, 8192, 1, true);
+  console.log('[Gemini raw] len=' + raw.length + ' | start:', raw.slice(0, 80));
 
-  // Bóc JSON: xóa markdown fence nhiều dạng
-  let clean = raw
-    .replace(/^```json\s*/m, '').replace(/^```\s*/m, '')
-    .replace(/\s*```\s*$/, '').trim();
+  // Thử parse trực tiếp trước (JSON mode trả ra clean JSON)
+  try { return JSON.parse(raw.trim()); } catch(_) {}
 
-  // Tìm object JSON đầu tiên
+  // Fallback: bóc fence + tìm { ... }
+  // Strip markdown fences without backtick-regex (avoids JS template literal conflict)
+  let clean = raw.trim();
+  if (clean.startsWith('\`\`\`json')) clean = clean.slice(7);
+  else if (clean.startsWith('\`\`\`')) clean = clean.slice(3);
+  if (clean.endsWith('\`\`\`')) clean = clean.slice(0, -3);
+  clean = clean.trim();
   const start = clean.indexOf('{');
   const end   = clean.lastIndexOf('}');
   if (start === -1 || end === -1) {
-    console.error('[Gemini JSON] Full raw:', raw);
-    throw new Error('AI không trả về JSON hợp lệ. Kiểm tra Console → DevTools để xem chi tiết.');
+    console.error('[Gemini] Không tìm thấy JSON. Raw (500):', raw.slice(0,500));
+    throw new Error('AI không trả JSON. Xem Console để debug. Raw: ' + raw.slice(0,100));
   }
   const jsonStr = clean.slice(start, end + 1);
   try {
     return JSON.parse(jsonStr);
   } catch(e) {
-    console.error('[Gemini JSON parse] String:', jsonStr.slice(0,300));
-    throw new Error('JSON lỗi cú pháp: ' + e.message);
+    // Thử sửa JSON bị cắt: đóng ngoặc thiếu
+    const fixed = _tryFixJson(jsonStr);
+    if (fixed) { console.warn('[Gemini] fixedJson used'); return fixed; }
+    console.error('[Gemini] Parse fail. len=' + jsonStr.length + ' err=' + e.message + ' | tail:', jsonStr.slice(-300));
+    throw new Error('JSON lỗi cú pháp: ' + e.message + ' (len=' + jsonStr.length + ')');
   }
+}
+
+function _tryFixJson(s) {
+  try {
+    let t = s.trimEnd()
+      .replace(/,\s*"[^"]*"\s*:\s*"[^"]*$/, '') // incomplete string value
+      .replace(/,\s*"[^"]*"\s*:\s*\d*$/, '')      // incomplete number value
+      .replace(/,\s*"[^"]*"\s*$/, '')              // incomplete key
+      .replace(/,\s*$/, '');                        // trailing comma
+    let open = 0; let inStr = false; let esc = false;
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      if (esc) { esc = false; continue; }
+      if (c === '\\' && inStr) { esc = true; continue; }
+      if (c === '"') { inStr = !inStr; continue; }
+      if (!inStr) { if (c==='{' || c==='[') open++; else if (c==='}'||c===']') open--; }
+    }
+    while (open > 0) { t += '}'; open--; }
+    return JSON.parse(t);
+  } catch(_) { return null; }
 }
 
 // Dùng khi cần text thuần (phân tích tháng, FI advisor, chat)
@@ -3309,15 +3443,20 @@ async function enterDashboard() {
 // ══════════════════════════════════════════════════════
 //  DASHBOARD
 // ══════════════════════════════════════════════════════
-async function loadDashboard() {
+async function loadDashboard(selectedMonth) {
   document.getElementById('dash-loading').style.display = 'block';
   document.getElementById('dash-content').style.display = 'none';
 
   try {
-    const month = new Date().toISOString().slice(0,7);
+    const month = selectedMonth || new Date().toISOString().slice(0,7);
+    // Set month picker to current selection
+    const picker = document.getElementById('dash-month-picker');
+    if (picker) picker.value = month;
+    _currentDashMonth = month;
+
     const data  = await apiGet('getDashboard', { month });
     if (data.error) throw new Error(data.error);
-    renderDashboard(data);
+    renderDashboard(data, month);
   } catch(err) {
     console.error('Dashboard load error:', err.message);
     // Hiển thị lỗi rõ ràng thay vì treo
@@ -3331,18 +3470,33 @@ async function loadDashboard() {
   }
 }
 
-function renderDashboard(d) {
+function dashChangeMonth(delta) {
+  const picker = document.getElementById('dash-month-picker');
+  const current = picker?.value || _currentDashMonth || new Date().toISOString().slice(0,7);
+  const [y, m] = current.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  const newMonth = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  if (picker) picker.value = newMonth;
+  loadDashboard(newMonth);
+}
+
+function renderDashboard(d, month) {
   document.getElementById('dash-loading').style.display = 'none';
   const dashContent = document.getElementById('dash-content');
   dashContent.style.display = 'block';
+
+  // Parse month for display
+  const displayMonth = month || d.month || new Date().toISOString().slice(0,7);
+  const [yr, mo] = displayMonth.split('-');
+  const monthLabel = 'Tháng ' + parseInt(mo) + '/' + yr;
 
   // KPI
   setEl('kpi-income',      fmt(d.income));
   setEl('kpi-expense',     fmt(d.expense));
   setEl('kpi-savings',     fmt(d.savings));
   setEl('kpi-rate',        d.savingsRate + '%');
-  setEl('kpi-income-sub',  'Tháng ' + (new Date().getMonth()+1));
-  setEl('kpi-expense-sub', 'Tháng ' + (new Date().getMonth()+1));
+  setEl('kpi-income-sub',  monthLabel);
+  setEl('kpi-expense-sub', monthLabel);
   setEl('kpi-savings-sub', d.savingsRate>=20 ? '✓ Đạt mục tiêu' : '↑ Cần tăng thêm');
 
   // FI bar
@@ -3851,9 +4005,11 @@ function exportTxCSV() {
 // ══════════════════════════════════════════════════════
 //  MODULE 3: BUDGET
 // ══════════════════════════════════════════════════════
-async function loadBudget() {
+async function loadBudget(selectedMonth) {
   try {
-    const month = new Date().toISOString().slice(0,7);
+    const month = selectedMonth || new Date().toISOString().slice(0,7);
+    const picker = document.getElementById('budget-month-picker');
+    if (picker) picker.value = month;
     const [budgetData, dashData] = await Promise.all([
       apiGet('getBudget', { month }),
       apiGet('getDashboard', { month }),
@@ -3868,7 +4024,7 @@ function renderBudgetPage(budget, dash) {
   // Progress bars
   const barsEl = document.getElementById('budget-bars-list');
   if (!budget.length) {
-    barsEl.innerHTML = '<div class="empty-state">Chưa thiết lập ngân sách. Thêm dữ liệu vào sheet budget trong Google Sheets.</div>';
+    barsEl.innerHTML = '<div class="empty-state">Chưa thiết lập ngân sách.<br><button onclick="openBudgetModal()" style="margin-top:10px;background:var(--accent);color:#000;border:none;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fh)">＋ Tạo ngân sách đầu tiên</button></div>';
   } else {
     barsEl.innerHTML = '';
     budget.sort((a,b) => parseFloat(b.pct_used) - parseFloat(a.pct_used)).forEach(b => {
@@ -3936,6 +4092,67 @@ function renderBudgetPage(budget, dash) {
         <div class="alert-text"><strong style="color:${isOver?'var(--danger)':'var(--warn)'}">${b.category}</strong> — ${pct.toFixed(0)}% ngân sách (${fmt(b.spent_amount)} / ${fmt(b.budget_amount)})</div>
       </div>`;
     }).join('');
+  }
+}
+
+// ── Budget Modal Functions ──
+function openBudgetModal(editData) {
+  const modal = document.getElementById('budget-modal');
+  const title = document.getElementById('budget-modal-title');
+  const monthInput = document.getElementById('budget-month-input');
+  const catSelect = document.getElementById('budget-cat-select');
+  const amtInput = document.getElementById('budget-amount-input');
+  const alertInput = document.getElementById('budget-alert-input');
+  const statusEl = document.getElementById('budget-save-status');
+
+  title.textContent = editData ? 'Sửa Ngân sách' : 'Thêm Ngân sách';
+  monthInput.value = editData?.month || document.getElementById('budget-month-picker')?.value || new Date().toISOString().slice(0,7);
+  catSelect.value = editData?.category || '';
+  amtInput.value = editData?.budget_amount || '';
+  alertInput.value = editData?.alert_threshold || 80;
+  if (statusEl) statusEl.textContent = '';
+
+  modal.classList.add('open');
+}
+
+function closeBudgetModal() {
+  document.getElementById('budget-modal').classList.remove('open');
+}
+
+async function saveBudgetEntry() {
+  const cat = document.getElementById('budget-cat-select').value;
+  const amount = parseFloat(document.getElementById('budget-amount-input').value);
+  const alert_threshold = parseFloat(document.getElementById('budget-alert-input').value) || 80;
+  const month = document.getElementById('budget-month-input').value;
+  const statusEl = document.getElementById('budget-save-status');
+
+  if (!cat) { statusEl.textContent = '⚠️ Vui lòng chọn danh mục'; statusEl.style.color = 'var(--warn)'; return; }
+  if (!amount || amount <= 0) { statusEl.textContent = '⚠️ Vui lòng nhập số tiền hợp lệ'; statusEl.style.color = 'var(--warn)'; return; }
+  if (!month) { statusEl.textContent = '⚠️ Vui lòng chọn tháng'; statusEl.style.color = 'var(--warn)'; return; }
+
+  const btn = document.getElementById('budget-save-btn');
+  btn.disabled = true; btn.textContent = '⏳ Đang lưu...';
+  statusEl.textContent = '';
+
+  try {
+    await apiPost({
+      action: 'saveBudget',
+      data: {
+        id: uuid(),
+        month: month,
+        category: cat,
+        budget_amount: amount,
+        spent_amount: 0,
+        alert_threshold: alert_threshold
+      }
+    });
+    closeBudgetModal();
+    loadBudget(month);
+  } catch(err) {
+    statusEl.textContent = '❌ Lỗi: ' + err.message;
+    statusEl.style.color = 'var(--danger)';
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Lưu';
   }
 }
 
@@ -4385,7 +4602,8 @@ async function deleteInsight(id, btn) {
   btn.disabled = true;
   btn.textContent = '...';
   try {
-    await apiPost({ action: 'deleteInsight', data: { id } });
+    const res = await apiPost({ action: 'deleteInsight', data: { id } });
+    if (res.error) throw new Error(res.error);
     // Animate out
     if (card) {
       card.style.transition = 'opacity .25s, transform .25s';
@@ -4652,11 +4870,18 @@ async function clearDataByMonth() {
   showClearStatus('⏳ Đang xóa...', 'var(--text-muted)');
   try {
     const res = await apiPost({ action: 'clearTransactionsByMonth', data: { month } }, 60000);
+    if (res.error) throw new Error(res.error);
     showClearStatus(`✅ Đã xóa giao dịch tháng ${month} (${res.deleted || 0} bản ghi)`, 'var(--green)');
     if (typeof loadTransactions === 'function') loadTransactions();
     if (typeof loadDashboard === 'function') loadDashboard();
   } catch(err) {
-    showClearStatus('❌ Lỗi: ' + err.message, 'var(--danger)');
+    const msg = err.message || '';
+    const isNotImpl = msg.includes('Unknown action') || msg.includes('not implemented') || msg.includes('undefined');
+    if (isNotImpl) {
+      showClearStatus('⚠️ AppScript chưa hỗ trợ lệnh xóa theo tháng. Cần thêm action clearTransactionsByMonth vào Code.gs (xem hướng dẫn trong HANDOFF.md).', 'var(--warn)');
+    } else {
+      showClearStatus('❌ Lỗi: ' + msg, 'var(--danger)');
+    }
   }
 }
 
@@ -4686,6 +4911,21 @@ async function confirmClearAll() {
   try {
     const res = await apiPost({ action: 'clearAllData', data: {} }, 90000);
     clearInterval(countdown);
+    // CHECK for AppScript error response (returns valid JSON but with error field)
+    if (res.error) {
+      const msg = res.error;
+      const isNotImpl = msg.includes('Unknown action') || msg.includes('not implemented') || msg.includes('undefined');
+      if (isNotImpl) {
+        showClearStatus(
+          '⚠️ AppScript chưa hỗ trợ lệnh này. Cần thêm action clearAllData vào Code.gs.\n' +
+          'Xem hướng dẫn trong file HANDOFF.md hoặc file Code_gs_additions.js.',
+          'var(--warn)'
+        );
+      } else {
+        showClearStatus('❌ Lỗi từ server: ' + msg, 'var(--danger)');
+      }
+      return;
+    }
     // Reset onboarding cache — sẽ hiện wizard X-quang lại sau reload
     localStorage.removeItem('fo_prod_ob');
     localStorage.removeItem('financeos_demo_onboarded');
@@ -4788,13 +5028,13 @@ function renderStatusPanel() {
   const panel = document.getElementById('cfg-status-panel');
   if (!panel) return;
   const scriptUrl = localStorage.getItem(LS_SCRIPT_KEY) || CONFIG.APPS_SCRIPT_URL || '';
-  const geminiKey = localStorage.getItem(LS_GEMINI_KEY) || '';
+  const geminiKey = localStorage.getItem(LS_GEMINI_KEY) || CONFIG.GEMINI_API_KEY || '';
   const scriptOk  = scriptUrl && scriptUrl.includes('script.google.com');
   const geminiOk  = geminiKey.length > 10;
 
   panel.innerHTML = [
     [scriptOk ? '🟢' : '🔴', 'AppScript',  scriptOk ? (DEMO_MODE ? 'URL có sẵn — đang chạy Demo Mode' : 'Đã kết nối') : 'Chưa cấu hình'],
-    [geminiOk ? '🟢' : '🟡', 'Gemini AI',  geminiOk ? 'API Key đã lưu' : 'Chưa có — AI dùng key mặc định'],
+    [geminiOk ? '🟢' : '🟡', 'Gemini AI',  geminiOk ? (localStorage.getItem(LS_GEMINI_KEY) ? 'API Key tùy chỉnh đã lưu' : 'Dùng key mặc định (sẵn sàng)') : 'Chưa cấu hình key'],
     [DEMO_MODE ? '🟡' : '🟢', 'Chế độ',    DEMO_MODE ? 'Demo Mode (dữ liệu mẫu)' : 'Production (Google Sheets thật)'],
   ].map(([icon, label, val]) => `
     <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border)">
@@ -4943,6 +5183,24 @@ function applyStoredConfig() {
   if (storedUrl) CONFIG.APPS_SCRIPT_URL = storedUrl;
   const storedKey = localStorage.getItem(LS_GEMINI_KEY);
   if (storedKey) CONFIG._savedKey = storedKey;
+
+  // ── Hard escape: nếu sau 25s loader vẫn còn → force Demo Mode ──
+  // Đây là lưới cuối cùng để tránh màn hình trắng/treo vĩnh viễn
+  setTimeout(() => {
+    const loader = document.getElementById('init-loader');
+    if (loader && loader.style.display !== 'none') {
+      console.warn('[FinanceOS] Hard escape after 25s — forcing demo mode');
+      try { bootDemoMode(false); } catch(e) {
+        loader.innerHTML = '<div style="padding:24px;text-align:center">'
+          + '<div style="font-size:24px;margin-bottom:12px">⏱️</div>'
+          + '<div style="font-size:13px;font-weight:700">App mất quá lâu để tải</div>'
+          + '<div style="font-size:11px;margin:8px 0;color:#666">Có thể do AppScript chưa deploy hoặc mạng chậm</div>'
+          + '<button onclick="location.reload()" style="margin:4px;padding:8px 18px;cursor:pointer;background:#6c47ff;color:#fff;border:none;font-weight:700">↻ Thử lại</button>'
+          + '<button onclick="localStorage.clear();location.reload()" style="margin:4px;padding:8px 18px;cursor:pointer">🗑 Xóa cache</button>'
+          + '</div>';
+      }
+    }
+  }, 25000);
 }
 
 
